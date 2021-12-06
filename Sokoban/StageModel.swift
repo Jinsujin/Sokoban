@@ -6,6 +6,7 @@ enum Command: Character, CaseIterable {
     case DOWN = "s"
     case RIGHT = "d"
     case QUIT = "q"
+    case RELOAD = "r"
     
     var message: String {
         switch self {
@@ -19,6 +20,8 @@ enum Command: Character, CaseIterable {
             return "D: 오른쪽으로 이동합니다.►"
         case .QUIT:
             return "Bye👋"
+        case .RELOAD:
+            return "맵을 초기화 합니다."
         }
     }
 }
@@ -72,13 +75,18 @@ final class StageModel {
   
     init() {
         // 처음부터 시작.
-        self.currentStageIndex = 0
+        self.currentStageIndex = 1
         
+        loadMapFromTxtFile()
+    }
+    
+    private func loadMapFromTxtFile() {
         guard let fetchString = fetchTextFile() else {
             fatalError("ERROR: fetch fail")
         }
         self.stages = createMap(from: fetchString)
     }
+    
     
     private func fetchTextFile() -> String? {
         let fileName = "map"
@@ -91,7 +99,6 @@ final class StageModel {
         let fileURL = dir.appendingPathComponent(fileName).appendingPathExtension("txt")
         do {
             let result = try String(contentsOf: fileURL)
-//            print("fetchSuccess:", result) // ok
             return result
         } catch {
             print("Failed reading from URL: \(fileURL), Error: " + error.localizedDescription)
@@ -144,8 +151,12 @@ final class StageModel {
             targetPoint = CGPoint(x: currentPoint.x + 1, y: currentPoint.y)
         case .LEFT:
             targetPoint = CGPoint(x: currentPoint.x - 1, y: currentPoint.y)
-        case .QUIT: // 여기서는 안쓰는 커맨드
+        case .QUIT: // 여기서는 처리안하는 커맨드
             return (stages[currentStageIndex].mapToString(), false)
+        case .RELOAD:
+            // txt 에서 다시 파일을 읽어서 맵을 새로고침
+            loadMapFromTxtFile()
+            return (stages[currentStageIndex].mapToString(), true)
         }
         
         // 플레이어 이동처리
