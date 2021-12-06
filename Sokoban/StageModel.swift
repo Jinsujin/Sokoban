@@ -60,25 +60,33 @@ struct Stage {
 final class StageModel {
     var stages: [Stage] = []
     var currentStageIndex: Int
-//    var currentStageIndex: Int {
-//        get {
-//            return self.currentStageIndex
-//        }
-//        set {
-//            self.currentStageIndex = (newValue - 1 < 0) ? 0 : newValue
-////            if (newValue - 1) < 0 {
-////                self.currentStageIndex = 0
-////            } else {
-////                self.currentStageIndex = newValue
-////            }
-//        }
-//    }
     
     init(stageNumber: Int) {
         self.currentStageIndex = stageNumber - 1
         
-        // 맵 문자열을 가져와 구조체롤 초기화
-        stages = createMap(from: mapStringData)
+        guard let fetchString = fetchTextFile() else {
+            fatalError("ERROR: fetch fail")
+        }
+        self.stages = createMap(from: fetchString)
+    }
+    
+    private func fetchTextFile() -> String? {
+        let fileName = "map"
+        //file:///Users/jsj/Documents/
+        guard let dir = try? FileManager.default.url(for: .documentDirectory,
+                                                     in: .userDomainMask, appropriateFor: nil, create: true)
+               else  {
+            return nil
+        }
+        let fileURL = dir.appendingPathComponent(fileName).appendingPathExtension("txt")
+        do {
+            let result = try String(contentsOf: fileURL)
+//            print("fetchSuccess:", result) // ok
+            return result
+        } catch {
+            print("Failed reading from URL: \(fileURL), Error: " + error.localizedDescription)
+        }
+        return nil
     }
     
     func getStage(by num: Int) -> Stage {
@@ -239,23 +247,6 @@ final class StageModel {
         
         return stages
     }
-    
-    private let mapStringData = """
-    Stage 1
-    #####
-    #OBP#
-    #####
-    =====
-    Stage 2
-      #######
-    ###  O  ###
-    #    B    #
-    # OB P BO #
-    ###  H  ###
-     #   B  #
-     ########
-    =====
-    """
 }
 
 

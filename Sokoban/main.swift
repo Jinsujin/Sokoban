@@ -56,7 +56,6 @@ func action(by inputString: String, completion: (Bool)-> Void) {
     var isContinueGame = true
     for input in inputArray {
         if !allCommandString.contains(input) {
-//            print("(경고!) \(input.uppercased()) 키는 가능한 입력이 아닙니다. 처리를 건너뜁니다.")
             print(MS.notAvailableKey(input))
             continue
         }
