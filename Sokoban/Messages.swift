@@ -43,9 +43,30 @@ enum GameItem: Int {
 
 struct MS {
 
+    
+    /*
+     case UP = "w"
+     case LEFT = "a"
+     case DOWN = "s"
+     case RIGHT = "d"
+     case QUIT = "q"
+     
+     
+     **/
+    
+    static let welcome =
+"""
+==================================
+🤖 소코반의 세계에 오신 것을 환영합니다! 🤖
+◽️w: 위          ◽️s: 아래
+◽️a: 왼쪽         ◽️d: 오른쪽
+❌q: 게임 종료
+==================================
+"""
     static let prompt = "SOKOBAN>"
     static let warning = "(경고!) 해당 명령을 수행할 수 없습니다!"
     
+    static let stageTitle = "Stage"
     static let space = " "
     
     static func notAvailableKey(_ key: Character) -> String {

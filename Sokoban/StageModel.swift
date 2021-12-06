@@ -61,8 +61,18 @@ final class StageModel {
     var stages: [Stage] = []
     var currentStageIndex: Int
     
-    init(stageNumber: Int) {
-        self.currentStageIndex = stageNumber - 1
+//    init(stageNumber: Int) {
+//        self.currentStageIndex = stageNumber - 1
+//
+//        guard let fetchString = fetchTextFile() else {
+//            fatalError("ERROR: fetch fail")
+//        }
+//        self.stages = createMap(from: fetchString)
+//    }
+  
+    init() {
+        // 처음부터 시작.
+        self.currentStageIndex = 0
         
         guard let fetchString = fetchTextFile() else {
             fatalError("ERROR: fetch fail")
@@ -95,6 +105,10 @@ final class StageModel {
     
     func getCurrentStage() -> Stage {
         return stages[currentStageIndex]
+    }
+    
+    func getCurrentTitle() -> String {
+        return "\(MS.stageTitle) \(self.currentStageIndex + 1)"
     }
     
     // input:

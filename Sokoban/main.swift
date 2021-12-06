@@ -1,34 +1,17 @@
 import Foundation
 
+print(MS.welcome)
+print("\n")
 
-/**
- step 2. 플레이어 이동 구현
-
- 요구사항
- 처음 시작하면 스테이지 2의 지도를 출력한다.
- 간단한 프롬프트 (예: SOKOBAN> )를 표시해 준다.
- 하나 이상의 문자를 입력받은 경우 순서대로 처리해서 단계별 상태를 출력한다.
- 벽이나 공등 다른 물체에 부딪히면 해당 명령을 수행할 수 없습니다 라는 메시지를 출력하고 플레이어를 움직이지 않는다.
- 
- - w: 위쪽
- - a: 왼쪽
- - s: 아래쪽
- - d: 오른쪽
- - q: 프로그램 종료
- */
-
-
-
-let model = StageModel(stageNumber: 2)
+let model = StageModel()
+print(model.getCurrentTitle())
 let map = model.getCurrentStage().mapToString()
 print(map)
 
 mainLoop(isContinueGame: true)
 
 
-
-
-//MARK: - 명령 입력 관련
+//MARK: - main
 func mainLoop(isContinueGame: Bool) {
     if !isContinueGame {
         print(Command.QUIT.message)
