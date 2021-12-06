@@ -12,7 +12,7 @@ enum GameItem: Int {
         switch self {
         case .wall: return "#"
         case .hall: return "O"
-        case .ball: return "ㅁ" //"ㅇ"
+        case .ball: return "B" //"ㅇ"
         case .player: return "P"
         case .stageDivide: return "="
         }

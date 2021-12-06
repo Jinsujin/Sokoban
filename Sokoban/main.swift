@@ -19,11 +19,13 @@ import Foundation
 
 
 
-let model = StageModel()
+let model = StageModel(stageNumber: 2)
 let map = model.getCurrentStage().mapToString()
 print(map)
 
 mainLoop(isContinueGame: true)
+
+
 
 
 //MARK: - 명령 입력 관련
@@ -32,7 +34,6 @@ func mainLoop(isContinueGame: Bool) {
         print(Command.QUIT.message)
         return
     }
-
     print(MS.prompt, terminator: "")
 
     let input = readLine() ?? ""
@@ -42,7 +43,7 @@ func mainLoop(isContinueGame: Bool) {
 
 
 
-func action(by input: String, completion: (Bool)-> Void) {
+func action(by inputString: String, completion: (Bool)-> Void) {
     let allCommandString = Command.allCases.map{ String($0.rawValue) }.joined()
 
     // 입력받은 문자열을 쪼개서 char 로 만든다
@@ -51,7 +52,7 @@ func action(by input: String, completion: (Bool)-> Void) {
     // 예) ddzw
     // ->, ->, z: 커맨드에 속하지 않음(경고메시지출력), z 경고메시지 출력
 
-    let inputArray = Array(input)
+    let inputArray = Array(inputString)
     var isContinueGame = true
     for input in inputArray {
         if !allCommandString.contains(input) {

@@ -52,18 +52,31 @@ struct Stage {
     var 플레이어의위치 = CGPoint(x: 0, y: 0)
     
     func mapToString() -> String {
-        let bb = map.compactMap({ String($0) }).joined(separator: "\n")
-        return bb
+        return map.compactMap({ String($0) }).joined(separator: "\n")
     }
-    
 }
 
 
 final class StageModel {
     var stages: [Stage] = []
-    var currentStageIndex = 1
+    var currentStageIndex: Int
+//    var currentStageIndex: Int {
+//        get {
+//            return self.currentStageIndex
+//        }
+//        set {
+//            self.currentStageIndex = (newValue - 1 < 0) ? 0 : newValue
+////            if (newValue - 1) < 0 {
+////                self.currentStageIndex = 0
+////            } else {
+////                self.currentStageIndex = newValue
+////            }
+//        }
+//    }
     
-    init() {
+    init(stageNumber: Int) {
+        self.currentStageIndex = stageNumber - 1
+        
         // 맵 문자열을 가져와 구조체롤 초기화
         stages = createMap(from: mapStringData)
     }
@@ -80,7 +93,7 @@ final class StageModel {
     // output: map 문자열 형태
     func move(to command: Character) -> (map: String?, systemInfo: String) {
         guard let command = Command(rawValue: command) else {
-            return ("",MS.warning)
+            return (nil, MS.warning)
         }
         let result = movePlayer(to: command)
         let infoString: String = result.isSuccess ? command.message : MS.warning
@@ -88,7 +101,7 @@ final class StageModel {
     }
     
     // 부딪힘 처리
-    func movePlayer(to command: Command) -> (map: String?, isSuccess: Bool) {
+    private func movePlayer(to command: Command) -> (map: String?, isSuccess: Bool) {
         // command: UP
         // 1. 플레이어의 현재위치, 이동할 위치 비교
         // => 장애물이 있다("#", "O", "o"): 움직이지 못했다 => 바로 지도문자열 리턴
@@ -230,16 +243,16 @@ final class StageModel {
     private let mapStringData = """
     Stage 1
     #####
-    #OㅁP#
+    #OBP#
     #####
     =====
     Stage 2
       #######
     ###  O  ###
-    #    ㅁ    #
-    # Oㅁ P ㅁO #
-    ###  ㅁ  ###
-     #   O  #
+    #    B    #
+    # OB P BO #
+    ###  H  ###
+     #   B  #
      ########
     =====
     """
