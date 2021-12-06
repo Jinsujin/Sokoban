@@ -227,19 +227,18 @@ final class StageModel {
         return stages
     }
     
-    
     private let mapStringData = """
     Stage 1
     #####
-    #OoP#
+    #OㅁP#
     #####
     =====
     Stage 2
       #######
     ###  O  ###
-    #    o    #
-    # Oo P oO #
-    ###  o  ###
+    #    ㅁ    #
+    # Oㅁ P ㅁO #
+    ###  ㅁ  ###
      #   O  #
      ########
     =====

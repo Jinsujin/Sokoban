@@ -12,7 +12,7 @@ enum GameItem: Int {
         switch self {
         case .wall: return "#"
         case .hall: return "O"
-        case .ball: return "o"
+        case .ball: return "ㅁ" //"ㅇ"
         case .player: return "P"
         case .stageDivide: return "="
         }
@@ -52,20 +52,4 @@ struct MS {
         return "(경고!) \(key.uppercased()) 키는 가능한 입력이 아닙니다. 처리를 건너뜁니다."
     }
     
-    private let mapStringData = """
-    Stage 1
-    #####
-    #OoP#
-    #####
-    =====
-    Stage 2
-      #######
-    ###  O  ###
-    #    o    #
-    # Oo P oO #
-    ###  o  ###
-     #   O  #
-     ########
-    =====
-    """
 }
