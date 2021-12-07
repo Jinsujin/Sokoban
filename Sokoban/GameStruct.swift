@@ -70,7 +70,7 @@ enum GameItem: Int {
     var isMoveableByPlayer: Bool {
         switch self {
         case .ball: return true
-        case .empty: return true
+        case .empty: return false
         case .wall: return false
         case .hall: return false
         case .player: return false

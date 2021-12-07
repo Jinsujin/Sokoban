@@ -1,43 +1,13 @@
 import Foundation
 
-/**
- 
- # : 벽 / 0
- O : 구멍 / 1
- o : 공  / 2
- P: 플레이어 / 3
- = : 스테이지 구분 / 4
- 
- 
- isWhitespace
- " ": 공백 true
- "": ?? 줄바꿈인듯
- isNewline: "" 줄바꿈 여부
- 
- isLetter: 문자인가, (공백,숫자, 특수문자는 false)
- 
- */
-
-
-
 
 final class StageModel {
     var stages: [Stage] = []
     var currentStageIndex: Int
     
-//    init(stageNumber: Int) {
-//        self.currentStageIndex = stageNumber - 1
-//
-//        guard let fetchString = fetchTextFile() else {
-//            fatalError("ERROR: fetch fail")
-//        }
-//        self.stages = createMap(from: fetchString)
-//    }
-  
     init() {
         // 처음부터 시작.
         self.currentStageIndex = 1
-        
         loadMapFromTxtFile()
     }
     
@@ -108,6 +78,7 @@ final class StageModel {
         default:
             targetPoint = currentPoint
         }
+        print(validatePointFromMap(targetPoint))
         return (validatePointFromMap(targetPoint) ? targetPoint : nil)
     }
     
@@ -140,8 +111,10 @@ final class StageModel {
         }
         
         let currentPoint = stages[currentStageIndex].플레이어의위치
+        
+        // 이동할 위치가 맵밖의 영역일때
         guard let targetPoint: CGPoint = calcTargetPoint(from: currentPoint, command: command) else {
-            fatalError("ERROR:: Over point from map")
+            return (stages[currentStageIndex].mapToString(), false)
         }
         
         guard let targetItem = convertItemFromCharacter(point: targetPoint) else {
@@ -155,21 +128,14 @@ final class StageModel {
         // 1-2. 밀 수 있는 지점인지 체크
         // 만약, 밀 수 없는 아이템일 경우, 플레이어의 위치는 변함없다
         // 플레이어 -> 박스 -> 벽
-//
-        // 타겟아이템이 이동할 위치가 없다면 움직일 필요 없다.
-        guard let nextPointOfTargetItem = calcTargetPoint(from: targetPoint, command: command) else {
-            return (stages[currentStageIndex].mapToString(), false)
-        }
 
         // 아이템을 움직인다.
-        if !pushItem(item: targetItem, from: targetPoint, to: nextPointOfTargetItem) {
-            // 아이템을 못움직인 경우, 플레이어 이동을 막음
+        // 아이템을 못움직인 경우, 플레이어 이동을 막음
+        if !targetItem.isPassableByPlayer
+            && !pushItem(item: targetItem, from: targetPoint, command: command) {
             return (stages[currentStageIndex].mapToString(), false)
         }
         
-        // 플레이어가 통과할 수 있는 아이템인가
-        // 플레이어는 O 구멍, empty 을 통과할 수 있다.
-
         // 2. 플레이어 처리
         movePlayer(from: currentPoint, to: targetPoint)
         
@@ -177,7 +143,41 @@ final class StageModel {
     }
     
     private func movePlayer(from: CGPoint, to: CGPoint) {
-        updateCurrentMapItem(target: from, item: GameItem.empty)
+        // 다음 위치가 플레이어가 통과할 수 있는 아이템인가
+        // 플레이어는 O 구멍, empty 을 통과할 수 있다.
+        // 현재 아이템
+        // 다음 위치에 있는 아이템.
+        guard let targetItem = convertItemFromCharacter(point: to) else {
+            fatalError("ERROR:: Cannot converted item")
+        }
+        // 플레이어가 지나갈수 없는 아이템이면(empty, hall) 플레이어를 움직이지 않는다.
+        if !targetItem.isPassableByPlayer {
+            return
+        }
+        
+        let 현재구멍밟음 = stages[currentStageIndex].구멍밟았나
+        
+        switch targetItem {
+        case .empty: // 이동할 위치가 비어있다
+            if 현재구멍밟음 {
+                updateCurrentMapItem(target: from, item: GameItem.hall)
+            } else {
+                updateCurrentMapItem(target: from, item: targetItem)
+            }
+            stages[currentStageIndex].구멍밟았나 = false
+            
+        case .hall: // 이동할 위치가 구멍이다
+            // 플레이어의 현재 위치가 구멍밟은 곳이다
+            if 현재구멍밟음 {
+                updateCurrentMapItem(target: from, item: GameItem.hall)
+            } else {
+                // 구멍 안밟음
+                updateCurrentMapItem(target: from, item: GameItem.empty)
+            }
+            stages[currentStageIndex].구멍밟았나 = true
+        default:
+            fatalError()
+        }
         updateCurrentMapItem(target: to, item: GameItem.player)
         stages[currentStageIndex].플레이어의위치 = to
         stages[currentStageIndex].턴수 += 1
@@ -189,21 +189,27 @@ final class StageModel {
     }
     
     // 한개의 아이템을 민다, 변경사항이 적용된 맵을 반환한다
-    private func pushItem(item: GameItem, from: CGPoint, to: CGPoint) -> Bool {
+    private func pushItem(item: GameItem, from: CGPoint, command: Command) -> Bool {
         // 1. 플레이어가 미는 item에 대한 유효 체크
         // () -> empty -> ??
         // 현재 item 이 empty인 경우는 아이템을 밀 필요 없다
-        if item == .empty {
-            return true
-        }
+//        if item == .empty {
+//            return true
+//        }
         // 플레이어가 움직일 수 없는 아이템이면 종료
         if !item.isMoveableByPlayer {
             return false
         }
         print("===pushItem:", item)
 
+        // 타겟아이템이 이동할 위치가 없다면 움직일 필요 없다.
+        // error - 아래로 움직였을때, 갈수 있는 공간이 있는데 안가짐
+        guard let nextPointOfPushItem = calcTargetPoint(from: from, command: command) else {
+            return false
+        }
+        
         // 아이템이 움직일 지점에 뭐가 있나
-        guard let nextItem = convertItemFromCharacter(point: to) else {
+        guard let nextItem = convertItemFromCharacter(point: nextPointOfPushItem) else {
             return false
         }
         
@@ -215,7 +221,7 @@ final class StageModel {
             // 공을 to point 로 이동
             // 공이 있던 from 을 빈공간으로 변경
             updateCurrentMapItem(target: from, item: GameItem.empty)
-            updateCurrentMapItem(target: to, item: item)
+            updateCurrentMapItem(target: nextPointOfPushItem, item: item)
             return true
         case .ball:
             break
@@ -307,6 +313,3 @@ final class StageModel {
         return stages
     }
 }
-
-
-
