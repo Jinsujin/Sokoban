@@ -161,7 +161,7 @@ final class StageModel {
             if 현재구멍밟음 {
                 updateCurrentMapItem(target: from, item: GameItem.hall)
             } else {
-                updateCurrentMapItem(target: from, item: targetItem)
+                updateCurrentMapItem(target: from, item: GameItem.empty)
             }
             stages[currentStageIndex].구멍밟았나 = false
             
@@ -188,14 +188,9 @@ final class StageModel {
     }
     
     // 한개의 아이템을 민다, 변경사항이 적용된 맵을 반환한다
+    //
     private func pushItem(item: GameItem, from: CGPoint, command: Command) -> Bool {
-        // 플레이어가 움직일 수 없는 아이템이면 종료
-        if !item.isMoveableByPlayer {
-            return false
-        }
-        print("===pushItem:", item)
-
-        // 타겟아이템이 이동할 위치가 없다면 움직일 필요 없다.
+        // 타겟아이템이 이동할 위치가 맵상에 없다면 움직이지 않는다.
         guard let nextPointOfPushItem = calcTargetPoint(from: from, command: command) else {
             return false
         }
@@ -205,23 +200,51 @@ final class StageModel {
             return false
         }
         
+        // (미는 item: 움직일 수 있는) && (미는 item 옆의 아이템: (플레이어가)통과가능한)
+        if !item.isMoveableByPlayer && !item.isPassableByPlayer  {
+            return false
+        }
+        
+        
         // 아이템을 움직였는지 여부를 반환해야 함
-        // 오른쪽키를 눌렀을때: (플레이어->) 공 -> nextItem
+        // 오른쪽키를 눌렀을때: (플레이어->) 공item -> nextItem
         switch nextItem {
-        case .empty:
+        case .empty: //(플레이어->) item -> 비어있음
             // 현재 아이템이 공이고, nextItem 이 empty일때
             // 공을 to point 로 이동
             // 공이 있던 from 을 빈공간으로 변경
-            updateCurrentMapItem(target: from, item: GameItem.empty)
-            updateCurrentMapItem(target: nextPointOfPushItem, item: item)
+            
+            if item == .ball {
+                updateCurrentMapItem(target: from, item: GameItem.empty)
+                updateCurrentMapItem(target: nextPointOfPushItem, item: item)
+            } else if item == .filled {
+                updateCurrentMapItem(target: from, item: GameItem.hall)
+                updateCurrentMapItem(target: nextPointOfPushItem, item: GameItem.ball)
+            }
+            
+            
             return true
-        case .ball:
-            break
         case .hall: // 구멍, 빈공간 이동 가능
+            print("===> push to hall:", item)
+            // 1. 공을 구멍에 넣는다
+            updateCurrentMapItem(target: from, item: GameItem.empty)
+            
+            // 2. 맵에 공이 들어간 표시를 한다.
+            updateCurrentMapItem(target: nextPointOfPushItem, item: GameItem.filled)
+            
+            // 3. 데이터의 남아있는 공 -= 1
+            stages[currentStageIndex].공의수 -= 1
+            
+            return true
+//        case .filled: // 구멍에 공이 들어간 상태.
+//            print("===> push to filled:", item)
+            // 움직일수 있고 &&
+            // 플레이어 처리
+//            stages[currentStageIndex].구멍밟았나 = true
+//            updateCurrentMapItem(target: from, item: GameItem.hall)
+//            updateCurrentMapItem(target: nextPointOfPushItem, item: GameItem.ball)
+            
             break
-//        case .ball, .wall: // 이동 불가: 현재 맵을 반환하고 종료
-//            break
-//        case 빈공간//이동가능
         default:
             break
         }

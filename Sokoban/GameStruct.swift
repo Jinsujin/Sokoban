@@ -109,6 +109,8 @@ enum GameItem: Int {
             return GameItem.stageDivide
         case GameItem.empty.symbol:
             return GameItem.empty
+        case GameItem.filled.symbol:
+            return GameItem.filled
         default:
             return nil
         }
