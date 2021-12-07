@@ -21,7 +21,11 @@ struct MS {
                             축하드립니다!
                             """
     static func clearStage(_ index: Int) -> String {
-        return "빠밤! Stage \(index) 클리어!"
+        return "빠밤! Stage \(index + 1) 클리어!"
+    }
+    
+    static func turn(_ num: Int) -> String {
+        return "턴수: \(num)"
     }
     
     static func notAvailableKey(_ key: Character) -> String {

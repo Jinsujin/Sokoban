@@ -20,7 +20,7 @@ func mainLoop(isContinueGame: Bool, isClear: Bool) {
     }
     
     if isClear {
-        print("축하합니다, 모든 스테이지를 클리어 했습니다!")
+        print(MS.clearGame)
         return
     }
     
@@ -70,7 +70,7 @@ func action(by inputString: String, completion: (Bool, Bool)-> Void) {
         }
         print(moveResult.systemInfo)
         
-        
+
         if model.checkStageClear() {
             model.startNextStage()
         }
@@ -79,6 +79,7 @@ func action(by inputString: String, completion: (Bool, Bool)-> Void) {
             isClear = true
             break
         }
+        
     }
     completion(isContinueGame, isClear)
 }

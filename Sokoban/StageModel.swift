@@ -4,10 +4,11 @@ import Foundation
 final class StageModel {
     var stages: [Stage] = []
     var currentStageIndex: Int
+    var isClearGame = false
     
     init() {
         // 처음부터 시작.
-        self.currentStageIndex = 1
+        self.currentStageIndex = 0
         loadMapFromTxtFile()
     }
     
@@ -62,10 +63,7 @@ final class StageModel {
     
     // 게임 전체 클리어
     func checkGameClear() -> Bool {
-        if currentStageIndex >= stages.count {
-            return true
-        }
-        return false
+        return isClearGame
     }
     
     // 스테이지 클리어
@@ -73,17 +71,21 @@ final class StageModel {
         if !(stages[currentStageIndex].공의수 == 0) {
             return false
         }
-        
         // 스테이지 결과 출력
-        print(MS.clearStage(currentStageIndex))
-        print("턴수: ", stages[currentStageIndex].턴수)
+        let prevIdx = currentStageIndex
+        print(MS.clearStage(prevIdx))
+        print(MS.turn(stages[prevIdx].턴수))
         
         // 다음 스테이지 설정
         // 3, 0  / Stage1
         // 3, 0 + 1 / Stage2
         // 3, 1 + 1 / Stage3
-        //        print("checkIsGameClear 공의 수: ",stages[currentStageIndex].공의수)
-        self.currentStageIndex = min(stages.count - 1, currentStageIndex + 1)
+        self.currentStageIndex = min(stages.count - 1, prevIdx + 1)
+        
+        // 마지막 스테이지를 클리어했다면
+        if prevIdx == currentStageIndex {
+            isClearGame = true
+        }
         return true
     }
     
@@ -92,6 +94,7 @@ final class StageModel {
         print(getCurrentTitle())
         let mapString = getCurrentStage().mapToString()
         print(mapString)
+        print(MS.br)
     }
     
     
@@ -214,7 +217,6 @@ final class StageModel {
         updateCurrentMapItem(target: to, item: GameItem.player)
         stages[currentStageIndex].플레이어의위치 = to
         stages[currentStageIndex].턴수 += 1
-        print("턴수: ", stages[currentStageIndex].턴수)
     }
     
     private func updateCurrentMapItem(target point: CGPoint, item: GameItem) {
