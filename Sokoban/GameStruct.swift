@@ -78,9 +78,6 @@ enum GameItem: Int {
     
     // Character 값을 받아서 타입 반환하기
     static func convertItem(by char: Character) -> GameItem? {
-        if char == " " {
-            return nil
-        }
         switch char {
         case GameItem.ball.symbol:
             return GameItem.ball

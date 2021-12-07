@@ -144,23 +144,34 @@ final class StageModel {
         // " ": 가능
         // 불가능
         
-        var map = stages[currentStageIndex].map
+//        var map = stages[currentStageIndex].map
 //        map[y][x]
-        let targetItem = map[Int(targetPoint.y) - 1][Int(targetPoint.x) - 1]
+//        let targetItem = map[Int(targetPoint.y) - 1][Int(targetPoint.x) - 1]
         
-        // 이동불가
-        if targetItem != " " {
+        guard let targetItem = convertItemFromCharacter(point: targetPoint) else {
+            fatalError("ERROR:: Cannot converted item")
+        }
+        
+        if targetItem != .empty { //targetItem.isMoveableByPlayer {
             return (stages[currentStageIndex].mapToString(), false)
         }
+        
+        // 이동불가
+//        if targetItem != " " {
+//            return (stages[currentStageIndex].mapToString(), false)
+//        }
         
 //        if targetItem == " "
 //            print("이동가능")
         // 1. 이동한 위치를 반영한 지도 업데이트
         // 지도에 현재 플레이어 위치를 " " 로 변경
         // 이동할 위치로 플레이어 이동 P
-        map[Int(currentPoint.y) - 1][Int(currentPoint.x) - 1] = " "
-        map[Int(targetPoint.y) - 1][Int(targetPoint.x) - 1] = GameItem.player.symbol
-        stages[currentStageIndex].map = map
+//        map[Int(currentPoint.y) - 1][Int(currentPoint.x) - 1] = " "
+//        map[Int(targetPoint.y) - 1][Int(targetPoint.x) - 1] = GameItem.player.symbol
+//        stages[currentStageIndex].map = map
+        
+        updateCurrentMapItem(target: currentPoint, item: GameItem.empty)
+        updateCurrentMapItem(target: targetPoint, item: GameItem.player)
         
         // 2. 플레이어 데이터 업데이트
         stages[currentStageIndex].플레이어의위치 = targetPoint
@@ -168,6 +179,9 @@ final class StageModel {
         return (stages[currentStageIndex].mapToString(), true)
     }
     
+    private func updateCurrentMapItem(target point: CGPoint, item: GameItem) {
+        stages[currentStageIndex].map[Int(point.y) - 1][Int(point.x) - 1] = item.symbol
+    }
     
     // 한개의 아이템을 민다, 변경사항이 적용된 맵을 반환한다
     private func pushItem(item: GameItem, from: CGPoint, to: CGPoint) -> [[Character]] {
@@ -186,13 +200,18 @@ final class StageModel {
             return self.stages[currentStageIndex].map
         }
         
-        // 플레이어->공->?
+        // (플레이어->) 공 -> ??
         switch nextItem {
-        case .ball, .wall: // 이동 불가
+        case .empty:
+            // 공을 to point 로 이동
+            // 공이 있던 from 을 빈공간으로 변경
+            
             break
-//        case 빈공간//이동가능
         case .hall: // 구멍, 빈공간 이동 가능
             break
+//        case .ball, .wall: // 이동 불가: 현재 맵을 반환하고 종료
+//            break
+//        case 빈공간//이동가능
         default:
             break
         }
