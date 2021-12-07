@@ -291,8 +291,11 @@ final class StageModel {
         if !validatePointFromMap(point) {
             return nil
         }
-        
-        let itemChar = map[Int(point.y) - 1][Int(point.x) - 1]
+        // (x = 5, y = 0)
+        let x = max(Int(point.x) - 1, 0)
+        let y = max(Int(point.y) - 1, 0)
+//        let itemChar = map[Int(point.y) - 1][Int(point.x) - 1]
+        let itemChar = map[y][x]
         return GameItem.convertItem(by: itemChar)
     }
     
