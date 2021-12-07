@@ -1,32 +1,5 @@
 import Foundation
 
-enum Command: Character, CaseIterable {
-    case UP = "w"
-    case LEFT = "a"
-    case DOWN = "s"
-    case RIGHT = "d"
-    case QUIT = "q"
-    case RELOAD = "r"
-    
-    var message: String {
-        switch self {
-        case .UP:
-            return "W: 위로 이동합니다.⬆︎"
-        case .DOWN:
-            return "S: 아래로 이동합니다.⬇︎"
-        case .LEFT:
-            return "A: 왼쪽으로 이동합니다.⬅︎"
-        case .RIGHT:
-            return "D: 오른쪽으로 이동합니다.►"
-        case .QUIT:
-            return "Bye👋"
-        case .RELOAD:
-            return "맵을 초기화 합니다."
-        }
-    }
-}
-
-
 /**
  
  # : 벽 / 0
@@ -45,19 +18,7 @@ enum Command: Character, CaseIterable {
  
  */
 
-struct Stage {
-    var map = [[Character]]()
-    var dimensionalArray = [[Int]]()
-    var 가로크기 = 0
-    var 세로크기 = 0
-    var 구멍의수 = 0
-    var 공의수 = 0
-    var 플레이어의위치 = CGPoint(x: 0, y: 0)
-    
-    func mapToString() -> String {
-        return map.compactMap({ String($0) }).joined(separator: "\n")
-    }
-}
+
 
 
 final class StageModel {
@@ -187,8 +148,6 @@ final class StageModel {
 //        map[y][x]
         let targetItem = map[Int(targetPoint.y) - 1][Int(targetPoint.x) - 1]
         
-//        print("다음위치에\(targetPoint) 있는거:", targetItem)
-        
         // 이동불가
         if targetItem != " " {
             return (stages[currentStageIndex].mapToString(), false)
@@ -212,12 +171,41 @@ final class StageModel {
     
     // 한개의 아이템을 민다, 변경사항이 적용된 맵을 반환한다
     private func pushItem(item: GameItem, from: CGPoint, to: CGPoint) -> [[Character]] {
-       
+        // 플레이어가 움직일 수 없는 아이템이면 종료
+        if !item.isMoveableByPlayer {
+            return self.stages[currentStageIndex].map
+        }
         
+        print("===pushItem:", item)
+        // 플레이어가 움직일 수 있는 아이템 처리
+        // 1. 공인 경우
+        // to Point 로 공을 움직일 수 있는지 체크
+        
+        // 움직일 지점에 뭐가 있나
+        guard let nextItem = convertItemFromCharacter(point: to) else {
+            return self.stages[currentStageIndex].map
+        }
+        
+        // 플레이어->공->?
+        switch nextItem {
+        case .ball, .wall: // 이동 불가
+            break
+//        case 빈공간//이동가능
+        case .hall: // 구멍, 빈공간 이동 가능
+            break
+        default:
+            break
+        }
         
         return [[Character]]()
     }
     
+    // 맵의 point 지점에 있는 아이템을 enum으로 변환
+    private func convertItemFromCharacter(point: CGPoint) -> GameItem? {
+        let map = stages[currentStageIndex].map
+        let itemChar = map[Int(point.y) - 1][Int(point.x) - 1]
+        return GameItem.convertItem(by: itemChar)
+    }
     
     
     // 플레이어가 이동한 위치를 반영해 맵을 다시 그리고 2차원 배열로 반환.
