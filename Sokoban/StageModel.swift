@@ -129,6 +129,24 @@ final class StageModel {
         return (result.map, infoString)
     }
     
+    
+    private func getTargetPoint(from currentPoint: CGPoint, command: Command) -> CGPoint {
+        let targetPoint: CGPoint
+        switch command {
+        case .UP:
+            targetPoint = CGPoint(x: currentPoint.x, y: currentPoint.y - 1)
+        case .DOWN:
+            targetPoint = CGPoint(x: currentPoint.x, y: currentPoint.y + 1)
+        case .RIGHT:
+            targetPoint = CGPoint(x: currentPoint.x + 1, y: currentPoint.y)
+        case .LEFT:
+            targetPoint = CGPoint(x: currentPoint.x - 1, y: currentPoint.y)
+        default:
+            targetPoint = currentPoint
+        }
+        return targetPoint
+    }
+    
     // 부딪힘 처리
     private func movePlayer(to command: Command) -> (map: String?, isSuccess: Bool) {
         // command: UP
@@ -138,19 +156,20 @@ final class StageModel {
         
         let currentPoint = stages[currentStageIndex].플레이어의위치
 //        print("플레이어의 현재 위치: ", currentPoint)
-        let targetPoint: CGPoint
+        let targetPoint: CGPoint = getTargetPoint(from: currentPoint, command: command)
+        
         switch command {
         case .UP:
             // 잘 움직인 경우, 아닌경우로 나누어짐
             // 잘 움직인 경우
             // 플레이어가 움직이고 난 다음의 맵 반환
-            targetPoint = CGPoint(x: currentPoint.x, y: currentPoint.y - 1)
+            break
         case .DOWN:
-            targetPoint = CGPoint(x: currentPoint.x, y: currentPoint.y + 1)
+            break
         case .RIGHT:
-            targetPoint = CGPoint(x: currentPoint.x + 1, y: currentPoint.y)
+            break
         case .LEFT:
-            targetPoint = CGPoint(x: currentPoint.x - 1, y: currentPoint.y)
+            break
         case .QUIT: // 여기서는 처리안하는 커맨드
             return (stages[currentStageIndex].mapToString(), false)
         case .RELOAD:
@@ -190,6 +209,14 @@ final class StageModel {
         return (stages[currentStageIndex].mapToString(), true)
     }
     
+    
+    // 한개의 아이템을 민다, 변경사항이 적용된 맵을 반환한다
+    private func pushItem(item: GameItem, from: CGPoint, to: CGPoint) -> [[Character]] {
+       
+        
+        
+        return [[Character]]()
+    }
     
     
     
