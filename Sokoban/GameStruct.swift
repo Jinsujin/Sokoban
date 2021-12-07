@@ -8,6 +8,8 @@ struct Stage {
     var 구멍의수 = 0
     var 공의수 = 0
     var 플레이어의위치 = CGPoint(x: 0, y: 0)
+    var 구멍밟았나 = false
+    var 턴수 = 0
     
     func mapToString() -> String {
         return map.compactMap({ String($0) }).joined(separator: "\n")
@@ -67,14 +69,27 @@ enum GameItem: Int {
     // 플레이어가 움직일 수 있는 아이템인가
     var isMoveableByPlayer: Bool {
         switch self {
+        case .ball: return true
+        case .empty: return true
         case .wall: return false
         case .hall: return false
         case .player: return false
         case .stageDivide: return false
-        case .ball: return true
-        case .empty: return true
         }
     }
+    
+    // 플레이어가 통과할 수 있는 아이템인가
+    var isPassableByPlayer: Bool {
+        switch self {
+        case .hall: return true
+        case .empty: return true
+        case .wall: return false
+        case .player: return false
+        case .stageDivide: return false
+        case .ball: return false
+        }
+    }
+    
     
     // Character 값을 받아서 타입 반환하기
     static func convertItem(by char: Character) -> GameItem? {
