@@ -1,22 +1,29 @@
 import Foundation
 
 print(MS.welcome)
-print("\n")
+print(MS.br)
 
 let model = StageModel()
-print(model.getCurrentTitle())
-let map = model.getCurrentStage().mapToString()
-print(map)
+//print(model.getCurrentTitle())
+//let map = model.getCurrentStage().mapToString()
+//print(map)
+model.startNextStage()
 
-mainLoop(isContinueGame: true)
+mainLoop(isContinueGame: true, isClear: false)
 
 
 //MARK: - main
-func mainLoop(isContinueGame: Bool) {
+func mainLoop(isContinueGame: Bool, isClear: Bool) {
     if !isContinueGame {
         print(Command.QUIT.message)
         return
     }
+    
+    if isClear {
+        print("축하합니다, 모든 스테이지를 클리어 했습니다!")
+        return
+    }
+    
     print(MS.prompt, terminator: "")
 
     let input = readLine() ?? ""
@@ -26,7 +33,7 @@ func mainLoop(isContinueGame: Bool) {
 
 
 
-func action(by inputString: String, completion: (Bool)-> Void) {
+func action(by inputString: String, completion: (Bool, Bool)-> Void) {
     let allCommandString = Command.allCases.map{ String($0.rawValue) }.joined()
 
     // 입력받은 문자열을 쪼개서 char 로 만든다
@@ -37,6 +44,7 @@ func action(by inputString: String, completion: (Bool)-> Void) {
 
     let inputArray = Array(inputString)
     var isContinueGame = true
+    var isClear = false
     for input in inputArray {
         if !allCommandString.contains(input) {
             print(MS.notAvailableKey(input))
@@ -49,7 +57,6 @@ func action(by inputString: String, completion: (Bool)-> Void) {
             isContinueGame = false
             break
         }
-
         // 이동 처리
         // 1. 이동이 반영된 지도 보여주기
         // => stageModel 에서 이동을 처리하고, 결과값을 받아오기
@@ -62,7 +69,17 @@ func action(by inputString: String, completion: (Bool)-> Void) {
             print(map)
         }
         print(moveResult.systemInfo)
+        
+        
+        if model.checkStageClear() {
+            model.startNextStage()
+        }
+        
+        if model.checkGameClear() {
+            isClear = true
+            break
+        }
     }
-    completion(isContinueGame)
+    completion(isContinueGame, isClear)
 }
 

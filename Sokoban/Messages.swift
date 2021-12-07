@@ -15,7 +15,14 @@ struct MS {
     static let warning = "(경고!) 해당 명령을 수행할 수 없습니다!"
     
     static let stageTitle = "Stage"
-    static let space = " "
+    static let br = "\n"
+    static let clearGame = """
+                            전체 게임을 클리어하셨습니다!
+                            축하드립니다!
+                            """
+    static func clearStage(_ index: Int) -> String {
+        return "빠밤! Stage \(index) 클리어!"
+    }
     
     static func notAvailableKey(_ key: Character) -> String {
         return "(경고!) \(key.uppercased()) 키는 가능한 입력이 아닙니다. 처리를 건너뜁니다."

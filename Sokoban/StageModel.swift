@@ -60,6 +60,40 @@ final class StageModel {
         return (result.map, infoString)
     }
     
+    // 게임 전체 클리어
+    func checkGameClear() -> Bool {
+        if currentStageIndex >= stages.count {
+            return true
+        }
+        return false
+    }
+    
+    // 스테이지 클리어
+    func checkStageClear() -> Bool {
+        if !(stages[currentStageIndex].공의수 == 0) {
+            return false
+        }
+        
+        // 스테이지 결과 출력
+        print(MS.clearStage(currentStageIndex))
+        print("턴수: ", stages[currentStageIndex].턴수)
+        
+        // 다음 스테이지 설정
+        // 3, 0  / Stage1
+        // 3, 0 + 1 / Stage2
+        // 3, 1 + 1 / Stage3
+        //        print("checkIsGameClear 공의 수: ",stages[currentStageIndex].공의수)
+        self.currentStageIndex = min(stages.count - 1, currentStageIndex + 1)
+        return true
+    }
+    
+    func startNextStage() {
+        print(MS.br)
+        print(getCurrentTitle())
+        let mapString = getCurrentStage().mapToString()
+        print(mapString)
+    }
+    
     
     // MARK:- Private functions
     // 계산한 타겟 지점이 현재 지도에서 유효범위 내 인지 체크
@@ -213,17 +247,16 @@ final class StageModel {
             // 현재 아이템이 공이고, nextItem 이 empty일때
             // 공을 to point 로 이동
             // 공이 있던 from 을 빈공간으로 변경
-            
             if item == .ball {
                 updateCurrentMapItem(target: from, item: GameItem.empty)
                 updateCurrentMapItem(target: nextPointOfPushItem, item: item)
-            } else if item == .filled {
+            } else if item == .filled { // 공을 구멍에서 빼낸다
                 updateCurrentMapItem(target: from, item: GameItem.hall)
                 updateCurrentMapItem(target: nextPointOfPushItem, item: GameItem.ball)
+                stages[currentStageIndex].공의수 += 1
             }
-            
-            
             return true
+            
         case .hall: // 구멍, 빈공간 이동 가능
             print("===> push to hall:", item)
             // 1. 공을 구멍에 넣는다
@@ -234,6 +267,7 @@ final class StageModel {
             
             // 3. 데이터의 남아있는 공 -= 1
             stages[currentStageIndex].공의수 -= 1
+            
             
             return true
 //        case .filled: // 구멍에 공이 들어간 상태.
@@ -257,6 +291,7 @@ final class StageModel {
         if !validatePointFromMap(point) {
             return nil
         }
+        
         let itemChar = map[Int(point.y) - 1][Int(point.x) - 1]
         return GameItem.convertItem(by: itemChar)
     }
