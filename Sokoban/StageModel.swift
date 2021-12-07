@@ -62,9 +62,8 @@ final class StageModel {
     
     
     // MARK:- Private functions
+    // 계산한 타겟 지점이 현재 지도에서 유효범위 내 인지 체크
     private func calcTargetPoint(from currentPoint: CGPoint, command: Command) -> CGPoint? {
-        // 계산한 타겟 지점이 현재 지도에서 유효범위 내 인지 체크
-        
         let targetPoint: CGPoint
         switch command {
         case .UP:
@@ -78,7 +77,7 @@ final class StageModel {
         default:
             targetPoint = currentPoint
         }
-        print(validatePointFromMap(targetPoint))
+//        print(validatePointFromMap(targetPoint))
         return (validatePointFromMap(targetPoint) ? targetPoint : nil)
     }
     
@@ -190,12 +189,6 @@ final class StageModel {
     
     // 한개의 아이템을 민다, 변경사항이 적용된 맵을 반환한다
     private func pushItem(item: GameItem, from: CGPoint, command: Command) -> Bool {
-        // 1. 플레이어가 미는 item에 대한 유효 체크
-        // () -> empty -> ??
-        // 현재 item 이 empty인 경우는 아이템을 밀 필요 없다
-//        if item == .empty {
-//            return true
-//        }
         // 플레이어가 움직일 수 없는 아이템이면 종료
         if !item.isMoveableByPlayer {
             return false
@@ -203,7 +196,6 @@ final class StageModel {
         print("===pushItem:", item)
 
         // 타겟아이템이 이동할 위치가 없다면 움직일 필요 없다.
-        // error - 아래로 움직였을때, 갈수 있는 공간이 있는데 안가짐
         guard let nextPointOfPushItem = calcTargetPoint(from: from, command: command) else {
             return false
         }

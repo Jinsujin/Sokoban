@@ -54,6 +54,7 @@ enum GameItem: Int {
     case player = 3
     case stageDivide = 4
     case empty = 5
+    case filled = 6 // 구멍에 박스가 들어간 상태
     
     var symbol: Character {
         switch self {
@@ -63,6 +64,7 @@ enum GameItem: Int {
         case .player: return "P"
         case .stageDivide: return "="
         case .empty: return " "
+        case .filled: return "X"
         }
     }
     
@@ -70,6 +72,7 @@ enum GameItem: Int {
     var isMoveableByPlayer: Bool {
         switch self {
         case .ball: return true
+        case .filled: return true
         case .empty: return false
         case .wall: return false
         case .hall: return false
@@ -87,9 +90,9 @@ enum GameItem: Int {
         case .player: return false
         case .stageDivide: return false
         case .ball: return false
+        case .filled: return false
         }
     }
-    
     
     // Character 값을 받아서 타입 반환하기
     static func convertItem(by char: Character) -> GameItem? {
