@@ -91,7 +91,10 @@ final class StageModel {
     }
     
     
-    private func getTargetPoint(from currentPoint: CGPoint, command: Command) -> CGPoint {
+    // MARK:- Private functions
+    private func calcTargetPoint(from currentPoint: CGPoint, command: Command) -> CGPoint? {
+        // 계산한 타겟 지점이 현재 지도에서 유효범위 내 인지 체크
+        
         let targetPoint: CGPoint
         switch command {
         case .UP:
@@ -105,71 +108,62 @@ final class StageModel {
         default:
             targetPoint = currentPoint
         }
-        return targetPoint
+        return (validatePointFromMap(targetPoint) ? targetPoint : nil)
     }
     
-    // 부딪힘 처리
+    // point 가 현재 지도에서 유효한 값인지 검사
+    private func validatePointFromMap(_ point: CGPoint) -> Bool {
+        let stage = self.stages[currentStageIndex]
+        let y = Int(point.y)
+        let x = Int(point.x)
+        //1. 세로크기 확인, 2. 가로 크기 확인
+        // 크기는 index보다 +1 크다
+        if y < stage.세로크기 && x < stage.map[y].count {
+            return true
+        }
+        return false
+    }
+    
+    
+    
+    // 1. 플레이어의 현재위치, 이동할 위치 비교
+    // => 장애물이 있다("#", "O", "o"): 움직이지 못했다 => 바로 지도문자열 리턴
+    // => 장애물이 없다(" "): 이동을 처리 => 이동 하고 난후의 지도 문자열 리턴
     private func movePlayer(to command: Command) -> (map: String?, isSuccess: Bool) {
-        // command: UP
-        // 1. 플레이어의 현재위치, 이동할 위치 비교
-        // => 장애물이 있다("#", "O", "o"): 움직이지 못했다 => 바로 지도문자열 리턴
-        // => 장애물이 없다(" "): 이동을 처리 => 이동 하고 난후의 지도 문자열 리턴
-        
-        let currentPoint = stages[currentStageIndex].플레이어의위치
-//        print("플레이어의 현재 위치: ", currentPoint)
-        let targetPoint: CGPoint = getTargetPoint(from: currentPoint, command: command)
-        
         switch command {
-        case .UP:
-            // 잘 움직인 경우, 아닌경우로 나누어짐
-            // 잘 움직인 경우
-            // 플레이어가 움직이고 난 다음의 맵 반환
-            break
-        case .DOWN:
-            break
-        case .RIGHT:
-            break
-        case .LEFT:
-            break
         case .QUIT: // 여기서는 처리안하는 커맨드
             return (stages[currentStageIndex].mapToString(), false)
         case .RELOAD:
             // txt 에서 다시 파일을 읽어서 맵을 새로고침
             loadMapFromTxtFile()
             return (stages[currentStageIndex].mapToString(), true)
+        default: break
         }
         
         // 플레이어 이동처리
-        // 지도 데이터에서 targetPositon 이 " " 인지 확인한다(이동가능한 지역인지)
-        // " ": 가능
-        // 불가능
-        
-//        var map = stages[currentStageIndex].map
-//        map[y][x]
-//        let targetItem = map[Int(targetPoint.y) - 1][Int(targetPoint.x) - 1]
+        let currentPoint = stages[currentStageIndex].플레이어의위치
+//        print("플레이어의 현재 위치: ", currentPoint)
+        guard let targetPoint: CGPoint = calcTargetPoint(from: currentPoint, command: command) else {
+            fatalError("ERROR:: Over point from map")
+        }
         
         guard let targetItem = convertItemFromCharacter(point: targetPoint) else {
             fatalError("ERROR:: Cannot converted item")
         }
-        
+        // 이동불가
         if targetItem != .empty { //targetItem.isMoveableByPlayer {
             return (stages[currentStageIndex].mapToString(), false)
         }
         
-        // 이동불가
-//        if targetItem != " " {
-//            return (stages[currentStageIndex].mapToString(), false)
-//        }
+        // 이동 가능한 아이템만 처리?
+        // command 에서 오른쪽으로 갈지 왼쪽으로 갈지 정보가 있다
+        // 지도를 넘어선 지점의 예외 처리 필요
+//        pushItem(item: targetItem, from: targetPoint, to: <#T##CGPoint#>)
+    
         
-//        if targetItem == " "
-//            print("이동가능")
-        // 1. 이동한 위치를 반영한 지도 업데이트
-        // 지도에 현재 플레이어 위치를 " " 로 변경
-        // 이동할 위치로 플레이어 이동 P
-//        map[Int(currentPoint.y) - 1][Int(currentPoint.x) - 1] = " "
-//        map[Int(targetPoint.y) - 1][Int(targetPoint.x) - 1] = GameItem.player.symbol
-//        stages[currentStageIndex].map = map
+    
         
+        // 키 입력 방향으로 위치 이동
         updateCurrentMapItem(target: currentPoint, item: GameItem.empty)
         updateCurrentMapItem(target: targetPoint, item: GameItem.player)
         
@@ -189,7 +183,6 @@ final class StageModel {
         if !item.isMoveableByPlayer {
             return self.stages[currentStageIndex].map
         }
-        
         print("===pushItem:", item)
         // 플레이어가 움직일 수 있는 아이템 처리
         // 1. 공인 경우
@@ -215,7 +208,6 @@ final class StageModel {
         default:
             break
         }
-        
         return [[Character]]()
     }
     
