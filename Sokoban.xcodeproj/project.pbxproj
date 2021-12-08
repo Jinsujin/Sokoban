@@ -29,7 +29,6 @@
 		6F6C96C7275DBF6C00D68FA0 /* Sokoban */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sokoban; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F6C96CA275DBF6C00D68FA0 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6F6C96D3275E168000D68FA0 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messages.swift; sourceTree = "<group>"; };
-		6F6C96D7275E95F500D68FA0 /* map.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = map.txt; sourceTree = "<group>"; };
 		6F8FD5BA275F4DF8000568A6 /* GameStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStruct.swift; sourceTree = "<group>"; };
 		6F8FD5BC27603E73000568A6 /* GameMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMap.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -64,7 +63,6 @@
 		6F6C96C9275DBF6C00D68FA0 /* Sokoban */ = {
 			isa = PBXGroup;
 			children = (
-				6F6C96D7275E95F500D68FA0 /* map.txt */,
 				6F6C96CA275DBF6C00D68FA0 /* main.swift */,
 				6F6C96D3275E168000D68FA0 /* Messages.swift */,
 				6F8FD5BA275F4DF8000568A6 /* GameStruct.swift */,

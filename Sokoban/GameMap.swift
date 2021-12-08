@@ -4,7 +4,8 @@ final class GameMap {
     var stages: [Stage] = []
 
     init() {
-        self.stages = convertMapArray(from: mapStringData)
+//        self.stages = convertMapArray(from: mapStringData)
+        convertMapArray(from: mapStringData)
     }
     
     func printAllStageInfo() {
@@ -14,44 +15,62 @@ final class GameMap {
         }
     }
     
+
     
-    private func convertMapArray(from mapData: String) -> [Stage] {
-        var stages: [Stage] = []
+    // 입력된 문자열이 "=====" 인지 확인
+    // 맞다: 다음 스테이지인것
+    // 아니다:
+    // return isNextStage: Bool
+    private func appendStage(line: String, stage: Stage) -> Bool {
+        if line != MS.divideLine {
+            return false
+        }
+        var s = stage
+        s.width = stage.map.map({ $0.count }).max() ?? 0
+        s.height = stage.map.count
+        stages.append(s)
+        return true
+    }
+    
+    private func updatedStageByItem(_ stage: Stage, by item: GameItem, point: (x: Int, y: Int)) -> Stage {
+        var editedStage = stage
+        switch item {
+        case .hall:
+            editedStage.hallCount += 1
+        case .ball:
+            editedStage.ballCount += 1
+        case .player:
+            // 0 부터 시작하기 때문에 y값 보정함 +1
+            editedStage.playerPoint = CGPoint(x: point.x, y: point.y + 1)
+        default:
+            break
+        }
+        return editedStage
+    }
+    
+    private func convertMapArray(from mapData: String) {
         var stage = Stage()
-        var 문자열 = String()
-        var 숫자배열 = [Int]()
+        var lineString = String()
+        var intArr = [Int]()
         var x = 0
         var y = 0
         
         for c in mapData {
             // 줄바꾸지 않음
+            // 한글자씩 가져와
             if !c.isNewline {
-                문자열.append(c)
+                lineString.append(c)
                 x += 1
                 
                 // 함수로 뺴기 가능?
                 guard let item = GameItem.convertItem(by: c) else {
                     continue
                 }
-                숫자배열.append(item.rawValue)
-                switch item {
-                case GameItem.hall:
-                    stage.hallCount += 1
-                case GameItem.ball:
-                    stage.ballCount += 1
-                case GameItem.player:
-                    // 0 부터 시작하기 때문에 y값 보정함 +1
-                    stage.playerPoint = CGPoint(x: x, y: y + 1)
-                case GameItem.stageDivide:
-                    break
-                default:
-                    break
-                }
+                intArr.append(item.rawValue)
+                stage = updatedStageByItem(stage, by: item, point: (x: x, y: y))
+
                 // 다음 스테이지인가
-                if 문자열 == MS.divideLine {
-                    stage.width = stage.map.map({ $0.count }).max() ?? 0
-                    stage.height = stage.map.count
-                    stages.append(stage)
+                if appendStage(line: lineString, stage: stage) {
                     stage = Stage()
                 }
                 continue
@@ -59,25 +78,23 @@ final class GameMap {
             
             ////////// 줄바꿨음 ///////////
             // 스테이지는 배열에 저장하지 않음
-            if 문자열.hasPrefix(MS.stageTitle) {
-                문자열 = ""
+            if lineString.hasPrefix(MS.stageTitle) {
+                lineString = ""
                 x = 0
                 y = 0
                 continue
             }
             
-            if !문자열.hasPrefix("=") {
-                stage.map.append(Array(문자열))
+            if !lineString.hasPrefix(String(GameItem.stageDivide.symbol)) {
+                stage.map.append(Array(lineString))
             }
-            stage.dimensionalArray.append(숫자배열)
+            stage.dimensionalArray.append(intArr)
             
-            문자열 = ""
-            숫자배열 = []
+            lineString = ""
+            intArr = []
             x = 0
             y += 1
         }
-        
-        return stages
     }
 
 
