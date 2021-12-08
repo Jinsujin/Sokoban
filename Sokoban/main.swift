@@ -1,25 +1,17 @@
 import Foundation
 
-print(MS.welcome)
 
-let model = StageModel()
-model.printStartStage()
-
-mainLoop(isContinueGame: true, isClear: false)
+let model = StageModel(stageNumber: 2)
+printWelcome()
+mainLoop(isContinueGame: true)
 
 
 //MARK: - main
-func mainLoop(isContinueGame: Bool, isClear: Bool) {
+func mainLoop(isContinueGame: Bool) {
     if !isContinueGame {
         print(Command.QUIT.message)
         return
     }
-    
-    if isClear {
-        print(MS.clearGame)
-        return
-    }
-    
     print(MS.prompt, terminator: "")
 
     let input = readLine() ?? ""
@@ -27,40 +19,37 @@ func mainLoop(isContinueGame: Bool, isClear: Bool) {
     action(by: inputLower, completion: mainLoop)
 }
 
+func printWelcome() {
+    let map = model.getCurrentStage().mapToString()
+    print(model.getStageTitle())
+    print(map)
+}
 
 
-func action(by inputString: String, completion: (Bool, Bool)-> Void) {
-    let allCommandString = Command.allCases.map{ String($0.rawValue) }.joined()
+func action(by inputString: String, completion: (Bool)-> Void) {
     let inputArray = Array(inputString)
     var isContinueGame = true
-    var isClear = false
     
     for input in inputArray {
-        if !allCommandString.contains(input) {
+        guard let command = Command(rawValue: input) else {
             print(MS.notAvailableKey(input))
             continue
         }
-
-        if Command(rawValue: input) == .QUIT {
+        
+        if command == .QUIT {
             isContinueGame = false
             break
         }
-
-        let moveResult = model.move(to: input)
-        if let map = moveResult.map {
-            print(map)
-        }
-        print(moveResult.systemInfo)
-        
-        if model.checkStageClear() {
-            model.printStartStage()
-        }
-        
-        if model.checkGameClear() {
-            isClear = true
-            break
-        }
+        oneKeyAction(command)
     }
-    completion(isContinueGame, isClear)
+    completion(isContinueGame)
 }
 
+
+func oneKeyAction(_ command: Command) {
+    let moveResult = model.move(to: command)
+    if let map = moveResult.map {
+        print(map)
+    }
+    print(moveResult.systemInfo)
+}
