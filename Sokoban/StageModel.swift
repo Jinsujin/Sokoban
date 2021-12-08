@@ -6,8 +6,8 @@ final class StageModel {
     var currentStageIndex: Int
     var isClearGame = false
     
+    
     init() {
-        // 처음부터 시작.
         self.currentStageIndex = 0
         loadMapFromTxtFile()
     }
@@ -16,16 +16,17 @@ final class StageModel {
         guard let fetchString = fetchTextFile() else {
             fatalError("ERROR: fetch fail")
         }
-        self.stages = createMap(from: fetchString)
+        self.stages = convertMapArray(from: fetchString)
     }
     
     
     private func fetchTextFile() -> String? {
         let fileName = "map"
         //file:///Users/jsj/Documents/
-        guard let dir = try? FileManager.default.url(for: .documentDirectory,
-                                                     in: .userDomainMask, appropriateFor: nil, create: true)
-               else  {
+        guard let dir = try? FileManager
+                            .default
+                            .url(for: .documentDirectory,
+                                 in: .userDomainMask, appropriateFor: nil, create: true) else {
             return nil
         }
         let fileURL = dir.appendingPathComponent(fileName).appendingPathExtension("txt")
@@ -38,10 +39,7 @@ final class StageModel {
         return nil
     }
     
-    func getStage(by num: Int) -> Stage {
-        return stages[num - 1]
-    }
-    
+
     func getCurrentStage() -> Stage {
         return stages[currentStageIndex]
     }
@@ -68,13 +66,14 @@ final class StageModel {
     
     // 스테이지 클리어
     func checkStageClear() -> Bool {
-        if !(stages[currentStageIndex].공의수 == 0) {
+        if !(stages[currentStageIndex].ballCount == 0) {
             return false
         }
         // 스테이지 결과 출력
         let prevIdx = currentStageIndex
-        print(MS.clearStage(prevIdx))
-        print(MS.turn(stages[prevIdx].턴수))
+//        print(MS.clearStage(prevIdx))
+//        print(MS.turn(stages[prevIdx].turn))
+        printResult(prevIdx)
         
         // 다음 스테이지 설정
         // 3, 0  / Stage1
@@ -89,7 +88,12 @@ final class StageModel {
         return true
     }
     
-    func startNextStage() {
+    private func printResult(_ stageIndex: Int) {
+        print(MS.clearStage(stageIndex))
+        print(MS.turn(stages[stageIndex].turn))
+    }
+    
+    func printStartStage() {
         print(MS.br)
         print(getCurrentTitle())
         let mapString = getCurrentStage().mapToString()
@@ -114,7 +118,6 @@ final class StageModel {
         default:
             targetPoint = currentPoint
         }
-//        print(validatePointFromMap(targetPoint))
         return (validatePointFromMap(targetPoint) ? targetPoint : nil)
     }
     
@@ -125,7 +128,7 @@ final class StageModel {
         let x = Int(point.x)
         //1. 세로크기 확인, 2. 가로 크기 확인
         // 크기는 index보다 +1 크다
-        if y < stage.세로크기 && x < stage.map[y].count {
+        if y < stage.height && x < stage.map[y].count {
             return true
         }
         return false
@@ -146,7 +149,7 @@ final class StageModel {
         default: break
         }
         
-        let currentPoint = stages[currentStageIndex].플레이어의위치
+        let currentPoint = stages[currentStageIndex].playerPoint
         
         // 이동할 위치가 맵밖의 영역일때
         guard let targetPoint: CGPoint = calcTargetPoint(from: currentPoint, command: command) else {
@@ -156,17 +159,7 @@ final class StageModel {
         guard let targetItem = convertItemFromCharacter(point: targetPoint) else {
             fatalError("ERROR:: Cannot converted item")
         }
-        // 1. 플레이어가 미는 아이템 처리
-        // 이동 가능한 아이템만 처리?
-        // command 에서 오른쪽으로 갈지 왼쪽으로 갈지 정보가 있다
-        // 지도를 넘어선 지점의 예외 처리 필요
-        
-        // 1-2. 밀 수 있는 지점인지 체크
-        // 만약, 밀 수 없는 아이템일 경우, 플레이어의 위치는 변함없다
-        // 플레이어 -> 박스 -> 벽
 
-        // 아이템을 움직인다.
-        // 아이템을 못움직인 경우, 플레이어 이동을 막음
         if !targetItem.isPassableByPlayer
             && !pushItem(item: targetItem, from: targetPoint, command: command) {
             return (stages[currentStageIndex].mapToString(), false)
@@ -174,7 +167,6 @@ final class StageModel {
         
         // 2. 플레이어 처리
         movePlayer(from: currentPoint, to: targetPoint)
-        
         return (stages[currentStageIndex].mapToString(), true)
     }
     
@@ -191,7 +183,7 @@ final class StageModel {
             return
         }
         
-        let 현재구멍밟음 = stages[currentStageIndex].구멍밟았나
+        let 현재구멍밟음 = stages[currentStageIndex].isAboveHall
         
         switch targetItem {
         case .empty: // 이동할 위치가 비어있다
@@ -200,7 +192,7 @@ final class StageModel {
             } else {
                 updateCurrentMapItem(target: from, item: GameItem.empty)
             }
-            stages[currentStageIndex].구멍밟았나 = false
+            stages[currentStageIndex].isAboveHall = false
             
         case .hall: // 이동할 위치가 구멍이다
             // 플레이어의 현재 위치가 구멍밟은 곳이다
@@ -210,34 +202,46 @@ final class StageModel {
                 // 구멍 안밟음
                 updateCurrentMapItem(target: from, item: GameItem.empty)
             }
-            stages[currentStageIndex].구멍밟았나 = true
+            stages[currentStageIndex].isAboveHall = true
         default:
             fatalError()
         }
         updateCurrentMapItem(target: to, item: GameItem.player)
-        stages[currentStageIndex].플레이어의위치 = to
-        stages[currentStageIndex].턴수 += 1
+        stages[currentStageIndex].playerPoint = to
+        stages[currentStageIndex].turn += 1
     }
+    
+    private func updateHall(point: CGPoint, isEmpty: Bool) {
+        let isPlayerAboveHall = stages[currentStageIndex].isAboveHall
+        
+        if isPlayerAboveHall {
+            updateCurrentMapItem(target: point, item: GameItem.hall)
+        } else {
+            updateCurrentMapItem(target: point, item: GameItem.empty)
+        }
+        stages[currentStageIndex].isAboveHall = true
+    }
+    
     
     private func updateCurrentMapItem(target point: CGPoint, item: GameItem) {
         stages[currentStageIndex].map[Int(point.y) - 1][Int(point.x) - 1] = item.symbol
     }
     
     // 한개의 아이템을 민다, 변경사항이 적용된 맵을 반환한다
-    //
     private func pushItem(item: GameItem, from: CGPoint, command: Command) -> Bool {
         // 타겟아이템이 이동할 위치가 맵상에 없다면 움직이지 않는다.
-        guard let nextPointOfPushItem = calcTargetPoint(from: from, command: command) else {
+        guard let nextPointOfPushItem = calcTargetPoint(from: from, command: command),
+              let nextItem = convertItemFromCharacter(point: nextPointOfPushItem) else {
             return false
         }
         
-        // 아이템이 움직일 지점에 뭐가 있나
-        guard let nextItem = convertItemFromCharacter(point: nextPointOfPushItem) else {
-            return false
-        }
         
         // (미는 item: 움직일 수 있는) && (미는 item 옆의 아이템: (플레이어가)통과가능한)
-        if !item.isMoveableByPlayer && !item.isPassableByPlayer  {
+//        if !item.isMoveableByPlayer && !item.isPassableByPlayer  {
+//            return false
+//        }
+        
+        if !item.isMoveableByPlayer && !nextItem.isPassableByPlayer  {
             return false
         }
         
@@ -255,7 +259,7 @@ final class StageModel {
             } else if item == .filled { // 공을 구멍에서 빼낸다
                 updateCurrentMapItem(target: from, item: GameItem.hall)
                 updateCurrentMapItem(target: nextPointOfPushItem, item: GameItem.ball)
-                stages[currentStageIndex].공의수 += 1
+                stages[currentStageIndex].ballCount += 1
             }
             return true
             
@@ -268,7 +272,7 @@ final class StageModel {
             updateCurrentMapItem(target: nextPointOfPushItem, item: GameItem.filled)
             
             // 3. 데이터의 남아있는 공 -= 1
-            stages[currentStageIndex].공의수 -= 1
+            stages[currentStageIndex].ballCount -= 1
             
             
             return true
@@ -282,9 +286,8 @@ final class StageModel {
             
             break
         default:
-            break
+            return false
         }
-        return false
     }
     
     // 맵의 point 지점에 있는 아이템을 enum으로 변환
@@ -293,17 +296,14 @@ final class StageModel {
         if !validatePointFromMap(point) {
             return nil
         }
-        // (x = 5, y = 0)
         let x = max(Int(point.x) - 1, 0)
         let y = max(Int(point.y) - 1, 0)
-//        let itemChar = map[Int(point.y) - 1][Int(point.x) - 1]
         let itemChar = map[y][x]
         return GameItem.convertItem(by: itemChar)
     }
     
-    private func createMap(from mapData: String) -> [Stage] {
+    private func convertMapArray(from mapData: String) -> [Stage] {
         var stages: [Stage] = []
-        
         var stage = Stage()
         var 문자열 = String()
         var 숫자배열 = [Int]()
@@ -323,12 +323,12 @@ final class StageModel {
                 숫자배열.append(item.rawValue)
                 switch item {
                 case GameItem.hall:
-                    stage.구멍의수 += 1
+                    stage.hallCount += 1
                 case GameItem.ball:
-                    stage.공의수 += 1
+                    stage.ballCount += 1
                 case GameItem.player:
                     // 0 부터 시작하기 때문에 y값 보정함 +1
-                    stage.플레이어의위치 = CGPoint(x: x, y: y + 1)
+                    stage.playerPoint = CGPoint(x: x, y: y + 1)
                 case GameItem.stageDivide:
                     break
                 default:
@@ -336,8 +336,8 @@ final class StageModel {
                 }
                 // 다음 스테이지인가
                 if 문자열 == "=====" {
-                    stage.가로크기 = stage.map.map({ $0.count }).max() ?? 0
-                    stage.세로크기 = stage.map.count
+                    stage.width = stage.map.map({ $0.count }).max() ?? 0
+                    stage.height = stage.map.count
                     stages.append(stage)
                     stage = Stage()
                 }
