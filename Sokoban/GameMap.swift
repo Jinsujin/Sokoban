@@ -8,27 +8,12 @@ final class GameMap {
     }
     
     func printAllStageInfo() {
-        for stage in stages {
-            
+        for (i, stage) in stages.enumerated() {
+            let infoString = stageInfoToString(stage, index: i)
+            print(infoString)
         }
-        
-        print("\(MS.stageTitle) ")
-        
     }
     
-    // 하나의 스테이지에 대한 문자열 반환
-    private func stageInfoToString(_ stage: Stage, index: Int) -> String {
-        
-        let result = """
-        \(MS.stageTitle) \(index + 1)
-        \(MS.br)
-        \(stage.width)
-
-
-        """
-
-        return ""
-    }
     
     private func convertMapArray(from mapData: String) -> [Stage] {
         var stages: [Stage] = []
@@ -63,10 +48,9 @@ final class GameMap {
                     break
                 }
                 // 다음 스테이지인가
-                if 문자열 == "=====" {
+                if 문자열 == MS.divideLine {
                     stage.width = stage.map.map({ $0.count }).max() ?? 0
                     stage.height = stage.map.count
-                    print(stage)
                     stages.append(stage)
                     stage = Stage()
                 }
@@ -74,9 +58,8 @@ final class GameMap {
             }
             
             ////////// 줄바꿨음 ///////////
-        //    print("줄바꾼 후에 현재문자:",c, 문자열)
             // 스테이지는 배열에 저장하지 않음
-            if 문자열.hasPrefix("Stage") {
+            if 문자열.hasPrefix(MS.stageTitle) {
                 문자열 = ""
                 x = 0
                 y = 0
@@ -98,7 +81,7 @@ final class GameMap {
     }
 
 
-    let mapStringData = """
+    private let mapStringData = """
         Stage 1
         #####
         #OBP#
@@ -114,7 +97,21 @@ final class GameMap {
          ########
         =====
         """
-
-
     
+    // 하나의 스테이지에 대한 문자열 반환
+    private func stageInfoToString(_ stage: Stage, index: Int) -> String {
+        let colon = ":"
+        return """
+        
+        \(MS.stageTitle) \(index + 1)
+        
+        \(stage.mapToString())
+        
+        \(MS.width)\(colon) \(stage.width)
+        \(MS.height)\(colon) \(stage.height)
+        \(MS.hallCount)\(colon) \(stage.hallCount)
+        \(MS.ballCount)\(colon) \(stage.ballCount)
+        \(MS.playerPoint)\(colon) (\(stage.playerPoint.x), \(stage.playerPoint.y))
+        """
+    }
 }

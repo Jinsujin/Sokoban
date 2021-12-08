@@ -14,35 +14,6 @@ struct Stage {
     func mapToString() -> String {
         return map.compactMap({ String($0) }).joined(separator: "\n")
     }
-    
-    //todo: 맵에 변경사항이 생기면(set), 맵 정보를 읽어서 구멍수 & 공의수 & 플레이어의 위치 다시 로드하기
-}
-
-
-enum Command: Character, CaseIterable {
-    case UP = "w"
-    case LEFT = "a"
-    case DOWN = "s"
-    case RIGHT = "d"
-    case QUIT = "q"
-    case RELOAD = "r"
-    
-    var message: String {
-        switch self {
-        case .UP:
-            return "W: 위로 이동합니다.⬆︎"
-        case .DOWN:
-            return "S: 아래로 이동합니다.⬇︎"
-        case .LEFT:
-            return "A: 왼쪽으로 이동합니다.⬅︎"
-        case .RIGHT:
-            return "D: 오른쪽으로 이동합니다.►"
-        case .QUIT:
-            return "Bye👋"
-        case .RELOAD:
-            return "맵을 초기화 합니다."
-        }
-    }
 }
 
 
@@ -53,8 +24,6 @@ enum GameItem: Int {
     case ball = 2
     case player = 3
     case stageDivide = 4
-    case empty = 5
-    case filled = 6 // 구멍에 박스가 들어간 상태
     
     var symbol: Character {
         switch self {
@@ -63,34 +32,6 @@ enum GameItem: Int {
         case .ball: return "B" //"ㅇ"
         case .player: return "P"
         case .stageDivide: return "="
-        case .empty: return " "
-        case .filled: return "X"
-        }
-    }
-    
-    // 플레이어가 움직일 수 있는 아이템인가
-    var isMoveableByPlayer: Bool {
-        switch self {
-        case .ball: return true
-        case .filled: return true
-        case .empty: return false
-        case .wall: return false
-        case .hall: return false
-        case .player: return false
-        case .stageDivide: return false
-        }
-    }
-    
-    // 플레이어가 통과할 수 있는 아이템인가
-    var isPassableByPlayer: Bool {
-        switch self {
-        case .hall: return true
-        case .empty: return true
-        case .wall: return false
-        case .player: return false
-        case .stageDivide: return false
-        case .ball: return false
-        case .filled: return false
         }
     }
     
@@ -107,10 +48,6 @@ enum GameItem: Int {
             return GameItem.player
         case GameItem.stageDivide.symbol:
             return GameItem.stageDivide
-        case GameItem.empty.symbol:
-            return GameItem.empty
-        case GameItem.filled.symbol:
-            return GameItem.filled
         default:
             return nil
         }
