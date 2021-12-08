@@ -4,7 +4,7 @@ struct Stage {
     var map = [[Character]]()
     var dimensionalArray = [[Int]]()
     var width = 0
-    var height = 0 
+    var height = 0
     var hallCount = 0
     var ballCount = 0
     var playerPoint = CGPoint(x: 0, y: 0)
@@ -13,7 +13,6 @@ struct Stage {
         return map.compactMap({ String($0) }).joined(separator: "\n")
     }
 }
-
 
 
 enum GameItem: Int {
@@ -27,13 +26,12 @@ enum GameItem: Int {
         switch self {
         case .wall: return "#"
         case .hall: return "O"
-        case .ball: return "B" //"ㅇ"
+        case .ball: return "B"
         case .player: return "P"
         case .stageDivide: return "="
         }
     }
     
-    // Character 값을 받아서 타입 반환하기
     static func convertItem(by char: Character) -> GameItem? {
         switch char {
         case GameItem.ball.symbol:
