@@ -30,33 +30,21 @@ func mainLoop(isContinueGame: Bool, isClear: Bool) {
 
 
 func action(by inputString: String, completion: (Bool, Bool)-> Void) {
-    let allCommandString = Command.allCases.map{ String($0.rawValue) }.joined()
     let inputArray = Array(inputString)
     var isContinueGame = true
     var isClear = false
     
     for input in inputArray {
-        if !allCommandString.contains(input) {
+        guard let command = Command(rawValue: input) else {
             print(MS.notAvailableKey(input))
             continue
         }
-
-        if Command(rawValue: input) == .QUIT {
+        if command == .QUIT {
             isContinueGame = false
             break
         }
 
-        let moveResult = model.move(to: input)
-        if let map = moveResult.map {
-            print(map)
-        }
-        print(moveResult.systemInfo)
-        
-        if model.checkStageClear() {
-            model.printStartStage()
-        }
-        
-        if model.checkGameClear() {
+        if oneKeyAction(command) {
             isClear = true
             break
         }
@@ -64,3 +52,19 @@ func action(by inputString: String, completion: (Bool, Bool)-> Void) {
     completion(isContinueGame, isClear)
 }
 
+func oneKeyAction(_ command: Command) -> Bool {
+    let moveResult = model.move(to: command)
+    if let map = moveResult.map {
+        print(map)
+    }
+    print(moveResult.systemInfo)
+    
+    if model.checkStageClear() {
+        model.printStartStage()
+    }
+    
+    if model.checkGameClear() {
+        return true
+    }
+    return false
+}

@@ -1,51 +1,5 @@
 import Foundation
 
-struct Stage {
-    var map = [[Character]]()
-    var dimensionalArray = [[Int]]()
-    var width = 0 // 가로크기
-    var height = 0 // 세로크기
-    var hallCount = 0
-    var ballCount = 0
-    var playerPoint = CGPoint(x: 0, y: 0)
-    var isAboveHall = false
-    var turn = 0
-    
-    func mapToString() -> String {
-        return map.compactMap({ String($0) }).joined(separator: "\n")
-    }
-    
-    //todo: 맵에 변경사항이 생기면(set), 맵 정보를 읽어서 구멍수 & 공의수 & 플레이어의 위치 다시 로드하기
-}
-
-
-enum Command: Character, CaseIterable {
-    case UP = "w"
-    case LEFT = "a"
-    case DOWN = "s"
-    case RIGHT = "d"
-    case QUIT = "q"
-    case RELOAD = "r"
-    
-    var message: String {
-        switch self {
-        case .UP:
-            return "W: 위로 이동합니다.⬆︎"
-        case .DOWN:
-            return "S: 아래로 이동합니다.⬇︎"
-        case .LEFT:
-            return "A: 왼쪽으로 이동합니다.⬅︎"
-        case .RIGHT:
-            return "D: 오른쪽으로 이동합니다.►"
-        case .QUIT:
-            return "Bye👋"
-        case .RELOAD:
-            return "맵을 초기화 합니다."
-        }
-    }
-}
-
-
 
 enum GameItem: Int {
     case wall = 0
@@ -68,7 +22,7 @@ enum GameItem: Int {
         }
     }
     
-    // 플레이어가 움직일 수 있는 아이템인가
+    /// 플레이어가 움직일 수 있는 아이템인가
     var isMoveableByPlayer: Bool {
         switch self {
         case .ball: return true
@@ -81,7 +35,7 @@ enum GameItem: Int {
         }
     }
     
-    // 플레이어가 통과할 수 있는 아이템인가
+    /// 플레이어가 통과할 수 있는 아이템인가
     var isPassableByPlayer: Bool {
         switch self {
         case .hall: return true
@@ -94,7 +48,6 @@ enum GameItem: Int {
         }
     }
     
-    // Character 값을 받아서 타입 반환하기
     static func convertItem(by char: Character) -> GameItem? {
         switch char {
         case GameItem.ball.symbol:
