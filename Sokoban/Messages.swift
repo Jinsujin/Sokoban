@@ -15,6 +15,15 @@ struct MS {
     static let stageTitle = "Stage"
     static let br = "\n"
     
+
+    static let width = "가로크기"
+    static let height = "세로크기"
+    static let hallCount = "구멍의 수"
+    static let ballCount = "공의 수"
+    static let playerPoint = "플레이어 위치"
+    
+    static let divideLine = "====="
+    
     static let warning = "(경고!) 해당 명령을 수행할 수 없습니다!"
     static func notAvailableKey(_ key: Character) -> String {
         return "(경고!) \(key.uppercased()) 키는 가능한 입력이 아닙니다. 처리를 건너뜁니다."
