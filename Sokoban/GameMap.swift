@@ -1,5 +1,7 @@
 import Foundation
 
+typealias GameMapType = [[Character]]
+
 final class GameMap {
     private let mapStringData = """
         Stage 1
@@ -20,8 +22,18 @@ final class GameMap {
     private var stages: [Stage] = []
     
     init() {
-        convertMapArray(from: mapStringData)
+        let mapArray = convertMapCharArray(from: mapStringData)
+        
+        // 데이터를 돌면서 구조체로 변환
+        for map in mapArray {
+//            print(map)
+            let stage = Stage(map)
+            self.stages.append(stage)
+            print("===========")
+        }
     }
+    
+    
     
     func printAllStageInfo() {
         for (i, stage) in stages.enumerated() {
@@ -30,16 +42,49 @@ final class GameMap {
         }
     }
     
-    private func appendStage(line: String, stage: Stage) -> Bool {
-        if line != MS.divideLine {
-            return false
+
+    
+    
+    /**
+     1. 문자열을 읽어 들인다
+     2. [[Character]] 로 변환
+     
+     */
+    
+    private func convertMapCharArray(from mapData: String) -> [[[Character]]] {
+        var mapArray = [[[Character]]]()
+        var map = [[Character]]()
+        var lineString = String()
+        
+        for char in mapData {
+            if !char.isNewline {
+                lineString.append(char)
+                
+                // 다음 스테이지인지 체크,
+                if lineString == MS.divideLine {
+                    // 새로운 맵 생성
+                    mapArray.append(map)
+                    map = [[Character]]()
+                }
+                continue
+            }
+            
+            /// 줄바꿨음
+            // 스테이지로 시작하면 제외
+            if lineString.hasPrefix("Stage") {
+                lineString = ""
+                   continue
+               }
+            
+            // 줄바꿈 문자로 시작한다 => mapArray에 추가
+            if !lineString.hasPrefix(String(GameItem.stageDivide.symbol)) {
+                map.append(Array(lineString))
+            }
+            lineString = ""
         }
-        var editedStage = stage
-        editedStage.width = stage.map.map({ $0.count }).max() ?? 0
-        editedStage.height = stage.map.count
-        stages.append(editedStage)
-        return true
+        return mapArray
     }
+    
     
     private func updatedStageByItem(_ stage: Stage, by item: GameItem, point: (x: Int, y: Int)) -> Stage {
         var editedStage = stage
@@ -54,6 +99,17 @@ final class GameMap {
             break
         }
         return editedStage
+    }
+    
+    private func appendStage(line: String, stage: Stage) -> Bool {
+        if line != MS.divideLine {
+            return false
+        }
+        var editedStage = stage
+        editedStage.width = stage.map.map({ $0.count }).max() ?? 0
+        editedStage.height = stage.map.count
+        stages.append(editedStage)
+        return true
     }
     
     private func convertMapArray(from mapData: String) {

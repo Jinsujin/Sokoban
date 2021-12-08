@@ -1,5 +1,5 @@
 import Foundation
 
 let gameMap = GameMap()
-gameMap.printAllStageInfo()
+//gameMap.printAllStageInfo()
 
