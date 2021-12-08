@@ -33,7 +33,6 @@ final class GameMap {
     }
     
     
-    // 초기화
     private func fetchMap() -> [Stage] {
         let mapArray = convertMapCharArray(from: mapStringData)
         var stages = [Stage]()
@@ -54,25 +53,19 @@ final class GameMap {
             if !char.isNewline {
                 lineString.append(char)
                 
-                // 다음 스테이지인지 체크,
                 if lineString == MS.divideLine {
-                    // 새로운 맵 생성
                     mapArray.append(map)
                     map = GameMapType()
                 }
                 continue
             }
             
-            /// 줄바꿨음
-            // 스테이지로 시작하면 제외
             if lineString.hasPrefix(MS.stageTitle) {
                 lineString = ""
-                   continue
-               }
-            
-            // 줄바꿈 문자로 시작한다 => mapArray에 추가
+                continue
+            }
             if !lineString.hasPrefix(String(GameItem.stageDivide.symbol)) {
-                map.append(Array(lineString))
+                map.append(Array(lineString)) // #OBP# 한줄을 2차 배열에 추가
             }
             lineString = ""
         }
