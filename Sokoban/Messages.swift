@@ -12,10 +12,19 @@ struct MS {
 ==================================
 """
     static let prompt = "SOKOBAN>"
-    static let warning = "(경고!) 해당 명령을 수행할 수 없습니다!"
-    
     static let stageTitle = "Stage"
     static let br = "\n"
+    
+    // 스텝1
+    static let width = "가로크기"
+    static let height = "세로크기"
+    static let hallCount = "구멍의 수"
+    static let playerPoint = "플레이어 위치"
+    
+    
+    static let warning = "(경고!) 해당 명령을 수행할 수 없습니다!"
+    
+    
     static let clearGame = """
                             전체 게임을 클리어하셨습니다!
                             축하드립니다!

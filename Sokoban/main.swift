@@ -5,12 +5,6 @@ import Foundation
 
 
 
-
-
-
-
-
-
 //
 //print(MS.welcome)
 //
@@ -26,12 +20,12 @@ import Foundation
 //        print(Command.QUIT.message)
 //        return
 //    }
-//    
+//
 //    if isClear {
 //        print(MS.clearGame)
 //        return
 //    }
-//    
+//
 //    print(MS.prompt, terminator: "")
 //
 //    let input = readLine() ?? ""
@@ -46,7 +40,7 @@ import Foundation
 //    let inputArray = Array(inputString)
 //    var isContinueGame = true
 //    var isClear = false
-//    
+//
 //    for input in inputArray {
 //        if !allCommandString.contains(input) {
 //            print(MS.notAvailableKey(input))
@@ -63,11 +57,11 @@ import Foundation
 //            print(map)
 //        }
 //        print(moveResult.systemInfo)
-//        
+//
 //        if model.checkStageClear() {
 //            model.printStartStage()
 //        }
-//        
+//
 //        if model.checkGameClear() {
 //            isClear = true
 //            break
