@@ -35,7 +35,6 @@ func action(by inputString: String, completion: (Bool)-> Void) {
             print(MS.notAvailableKey(input))
             continue
         }
-        
         if command == .QUIT {
             isContinueGame = false
             break

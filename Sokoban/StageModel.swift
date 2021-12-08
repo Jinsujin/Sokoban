@@ -58,8 +58,7 @@ final class StageModel {
         let targetPoint: CGPoint = calcTargetPoint(from: currentPoint, command: command)
         let targetItem = map[Int(targetPoint.y) - 1][Int(targetPoint.x) - 1]
 
-        // 이동불가
-        if targetItem != " " {
+        if targetItem != GameItem.empty.symbol {
             return (stages[currentStageIndex].mapToString(), false)
         }
         map[Int(currentPoint.y) - 1][Int(currentPoint.x) - 1] = " "

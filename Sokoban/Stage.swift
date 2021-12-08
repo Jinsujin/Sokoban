@@ -2,7 +2,7 @@ import Foundation
 
 struct Stage {
     var map = GameMapType()
-    var dimensionalArray = [[Int]]()
+//    var dimensionalArray = [[Int]]()
     var width = 0
     var height = 0
     var hallCount = 0
@@ -27,7 +27,7 @@ extension Stage {
             .filter({ $0 == GameItem.hall.symbol })
             .count
         self.playerPoint = findPlayerPoint(gameMap)
-        self.dimensionalArray = makeIntMap(gameMap)
+//        self.dimensionalArray = makeIntMap(gameMap)
     }
     
     
