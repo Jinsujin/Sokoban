@@ -47,9 +47,9 @@ final class StageModel {
 
 	// 2
 	init() {
-        self.currentStageIndex = 0
-        self.stages = map.getAllStages()
-    }
+	        self.currentStageIndex = 0
+        	self.stages = map.getAllStages()
+	}
 ...
 }
 ```
@@ -104,13 +104,13 @@ private func action(to command: Command) -> (map: String?, isSuccess: Bool) {
     guard let targetItem = convertItemFromCharacter(point: targetPoint) else {
         fatalError("ERROR:: Cannot converted item")
     }
-	// 2
+    // 2
     if !targetItem.isPassableByPlayer
         && !pushItem(item: targetItem, from: targetPoint, command: command) {
         return (stages[currentStageIndex].mapToString(), false)
     }
 
-	// 3
+    // 3
     movePlayer(from: currentPoint, to: targetPoint)
     return (stages[currentStageIndex].mapToString(), true)
 }
@@ -141,7 +141,8 @@ private func pushItem(item: GameItem, from: CGPoint, command: Command) -> Bool {
     if !item.isMoveableByPlayer && !item.isPassableByPlayer  {
         return false
     }
-
+    
+    //3
     switch nextItem {
     case .empty:
         if item == .ball {
@@ -192,7 +193,26 @@ enum GameItem: Int {
 
 ### 2-2. 플레이어 이동
 
+Stage 구조체에 플레이어가 구멍 위에 있는지에 대한 속성을 추가했습니다.
+
+```swift
+struct Stage {
+    ...
+    var isAboveHall = false
+    var turn = 0
+}
+```
 이동할 위치에 어떤 아이템(targetItem) 이 있느냐에 따라 분기처리 합니다.
+구멍위에 있는 플레이어가 비어있는 위치로 이동할때, 이동 후 다음과 같은 결과가 됩니다:
+```
+이동 전: 플레이어(구멍위에있다) -> 움직일위치.비어있다(targetItem)
+이동 결과: 구멍 -> 플레이어(구멍위에 있지 않다)
+```
+이동할 위치가 구멍위라면 다음과 같습니다:
+```
+이동 전: 플레이어(구멍위에있다) -> 움직일위치.구멍(targetItem)
+이동 결과: 구멍 -> 플레이어(구멍위에 있다)
+```
 
 ```swift
 private func movePlayer(from: CGPoint, to: CGPoint) {
@@ -230,15 +250,6 @@ private func movePlayer(from: CGPoint, to: CGPoint) {
 }
 ```
 
-Stage 구조체에 플레이어가 구멍 위에 있는지에 대한 속성을 추가했습니다.
-
-```swift
-struct Stage {
-    ...
-    var isAboveHall = false
-    var turn = 0
-}
-```
 
 ## 3. 로직 처리를 도와주는 함수들
 
@@ -346,9 +357,9 @@ func oneKeyAction(_ command: Command) -> Bool {
 
 func action(by inputString: String, completion: (Bool, Bool)-> Void) {
     ...
-		var isContinueGame = true
+    var isContinueGame = true
     var isClear = false
-		// ...oneKeyAction()....
+    // ...oneKeyAction()....
     completion(isContinueGame, isClear)
 }
 ```
@@ -370,10 +381,10 @@ func checkStageClear() -> Bool {
     let prevIdx = currentStageIndex
     printResult(prevIdx)
 
-		// 2
+    // 2
     self.currentStageIndex = min(stages.count - 1, prevIdx + 1)
 
-		// 3
+    // 3
     if prevIdx == currentStageIndex {
         isClearGame = true
     }
