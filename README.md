@@ -47,9 +47,9 @@ final class StageModel {
 
 	// 2
 	init() {
-      self.currentStageIndex = 0
-      self.stages = map.getAllStages()
-  }
+        self.currentStageIndex = 0
+        self.stages = map.getAllStages()
+    }
 ...
 }
 ```
@@ -87,7 +87,7 @@ action 메서드는 크게 3가지 과정으로 나뉩니다.
 
 ```swift
 private func action(to command: Command) -> (map: String?, isSuccess: Bool) {
-		// 1
+    // 1
     switch command {
     case .QUIT:
         return (stages[currentStageIndex].mapToString(), false)
@@ -104,13 +104,13 @@ private func action(to command: Command) -> (map: String?, isSuccess: Bool) {
     guard let targetItem = convertItemFromCharacter(point: targetPoint) else {
         fatalError("ERROR:: Cannot converted item")
     }
-		// 2
+	// 2
     if !targetItem.isPassableByPlayer
         && !pushItem(item: targetItem, from: targetPoint, command: command) {
         return (stages[currentStageIndex].mapToString(), false)
     }
 
-		// 3
+	// 3
     movePlayer(from: currentPoint, to: targetPoint)
     return (stages[currentStageIndex].mapToString(), true)
 }
@@ -131,13 +131,13 @@ private func action(to command: Command) -> (map: String?, isSuccess: Bool) {
 
 ```swift
 private func pushItem(item: GameItem, from: CGPoint, command: Command) -> Bool {
-		// 1
-	 guard let nextPointOfPushItem = calcTargetPoint(from: from, command: command),
-      let nextItem = convertItemFromCharacter(point: nextPointOfPushItem) else {
-    return false
-	 }
+    // 1
+    guard let nextPointOfPushItem = calcTargetPoint(from: from, command: command),
+    let nextItem = convertItemFromCharacter(point: nextPointOfPushItem) else {
+        return false
+    }
 
-		// 2
+    // 2
     if !item.isMoveableByPlayer && !item.isPassableByPlayer  {
         return false
     }
@@ -174,19 +174,19 @@ enum GameItem: Int {
     ...
     case filled = 6
 
-		var isMoveableByPlayer: Bool {
+    var isMoveableByPlayer: Bool {
 		switch self {
 		case .ball: return true
 		case .filled: return true
 			...생략
-		}
+	}
 
-		var isPassableByPlayer: Bool {
+	var isPassableByPlayer: Bool {
 		switch self {
 		case .hall: return true
-			case .empty: return true
+		case .empty: return true
 			...생략
-		}
+	}
 }
 ```
 
@@ -234,9 +234,9 @@ Stage 구조체에 플레이어가 구멍 위에 있는지에 대한 속성을 �
 
 ```swift
 struct Stage {
-	...
-	var isAboveHall = false
-	var turn = 0
+    ...
+    var isAboveHall = false
+    var turn = 0
 }
 ```
 
@@ -248,11 +248,11 @@ struct Stage {
 
 ```swift
 private func calcTargetPoint(from currentPoint: CGPoint, command: Command) -> CGPoint? {
-	let targetPoint: CGPoint
+    let targetPoint: CGPoint
 	switch command {
-	case .UP:
+    case .UP:
 	    targetPoint = CGPoint(x: currentPoint.x, y: currentPoint.y - 1)
-	case .DOWN:
+    case .DOWN:
 	    targetPoint = CGPoint(x: currentPoint.x, y: currentPoint.y + 1)
 	case .RIGHT:
 	    targetPoint = CGPoint(x: currentPoint.x + 1, y: currentPoint.y)
