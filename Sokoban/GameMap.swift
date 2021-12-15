@@ -65,33 +65,40 @@ final class GameMap {
         return stages
     }
     
-    
-    private func convertMapCharArray(from mapData: String) -> [GameMapType] {
-        var mapArray = [GameMapType]()
+
+    private func extractMap(_ data: String) -> GameMapType {
         var map = GameMapType()
         var lineString = String()
         
-        for char in mapData {
+        for char in data {
             if !char.isNewline {
                 lineString.append(char)
-                
-                if lineString == MS.divideLine {
-                    mapArray.append(map)
-                    map = GameMapType()
-                }
                 continue
             }
-            
             if lineString.hasPrefix(MS.stageTitle) {
                 lineString = ""
                 continue
             }
-            if !lineString.hasPrefix(String(GameItem.stageDivide.symbol)) {
-                map.append(Array(lineString)) // #OBP# 한줄을 2차 배열에 추가
-            }
+            map.append(Array(lineString)) // #OBP# 한줄을 2차 배열에 추가
             lineString = ""
         }
-        return mapArray
+
+        if !lineString.isEmpty {
+            map.append(Array(lineString))
+        }
+        
+        return map
+    }
+    
+    private func convertMapCharArray(from mapString: String) -> [GameMapType] {
+        var result = [GameMapType]()
+        
+        let mapStringArray = mapString.components(separatedBy: MS.divideLine)
+        for item in mapStringArray {
+            let extractedMap = extractMap(item)
+            result.append(extractedMap)
+        }
+        return result
     }
     
 
