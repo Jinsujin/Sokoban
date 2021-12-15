@@ -200,9 +200,16 @@ final class StageController {
             return true
             
         case .hall:
-            updateCurrentMapItem(target: from, item: GameItem.empty)
-            updateCurrentMapItem(target: nextPointOfPushItem, item: GameItem.filled)
-            stages[currentStageIndex].ballCount -= 1
+            if item == .ball {
+                // 1. 공(item)을 구멍(nextItem)에 넣는 경우
+                updateCurrentMapItem(target: from, item: GameItem.empty)
+                updateCurrentMapItem(target: nextPointOfPushItem, item: GameItem.filled)
+                stages[currentStageIndex].ballCount -= 1
+            } else if item == .filled {
+                // 2. 공이있는구멍(item)을 구멍(nextItem)에 넣는 경우
+                updateCurrentMapItem(target: from, item: GameItem.hall)
+                updateCurrentMapItem(target: nextPointOfPushItem, item: GameItem.filled)
+            }
             return true
         default:
             return false
