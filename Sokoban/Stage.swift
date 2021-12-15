@@ -14,6 +14,11 @@ struct Stage {
     func mapToString() -> String {
         return map.compactMap({ String($0) }).joined(separator: "\n")
     }
+    
+    // 화면에 표시하기 위한 플레이어 위치 반환
+    var playerPointForPrint: CGPoint {
+        CGPoint(x: playerPoint.x + 1, y: playerPoint.y + 1)
+    }
 }
 
 extension Stage {
@@ -68,6 +73,6 @@ extension Stage {
             y = i
             x = playerIdx
         }
-        return CGPoint(x: x + 1, y: y + 1)
+        return CGPoint(x: x, y: y)
     }
 }

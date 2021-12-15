@@ -83,8 +83,10 @@ final class StageController {
         let stage = self.stages[currentStageIndex]
         let y = Int(point.y)
         let x = Int(point.x)
+        
         // 크기는 index보다 +1 크다
-        if y < stage.height && x < stage.map[y].count {
+        if !(y < 0 || x < 0)
+         && (y < stage.height) && (x < stage.map[y].count) {
             return true
         }
         return false
@@ -112,12 +114,13 @@ final class StageController {
             fatalError("ERROR:: Cannot converted item")
         }
 
+        // 1. 아이템을 민다
         if !targetItem.isPassableByPlayer
             && !pushItem(item: targetItem, from: targetPoint, command: command) {
             return (stages[currentStageIndex].mapToString(), false)
         }
         
-        // 2. 플레이어 처리
+        // 2. 플레이어 이동
         movePlayer(from: currentPoint, to: targetPoint)
         return (stages[currentStageIndex].mapToString(), true)
     }
@@ -170,7 +173,7 @@ final class StageController {
     
     
     private func updateCurrentMapItem(target point: CGPoint, item: GameItem) {
-        stages[currentStageIndex].map[Int(point.y) - 1][Int(point.x) - 1] = item.symbol
+        stages[currentStageIndex].map[Int(point.y)][Int(point.x)] = item.symbol
     }
     
     
@@ -212,10 +215,9 @@ final class StageController {
         if !validatePointFromMap(point) {
             return nil
         }
-        let x = max(Int(point.x) - 1, 0)
-        let y = max(Int(point.y) - 1, 0)
-        let itemChar = map[y][x]
-        return GameItem.convertItem(by: itemChar)
+        let x = max(Int(point.x), 0)
+        let y = max(Int(point.y), 0)
+        return GameItem.convertItem(by: map[y][x])
     }
     
     private func printResult(_ stageIndex: Int) {

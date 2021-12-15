@@ -107,7 +107,7 @@ final class GameMap {
         \(MS.height)\(colon) \(stage.height)
         \(MS.hallCount)\(colon) \(stage.hallCount)
         \(MS.ballCount)\(colon) \(stage.ballCount)
-        \(MS.playerPoint)\(colon) (\(stage.playerPoint.x), \(stage.playerPoint.y))
+        \(MS.playerPoint)\(colon) (\(stage.playerPointForPrint.x), \(stage.playerPointForPrint.y))
         """
     }
 }
