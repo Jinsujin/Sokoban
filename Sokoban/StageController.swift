@@ -1,7 +1,7 @@
 import Foundation
 
 
-final class StageModel {
+final class StageController {
     var stages: [Stage] = []
     var currentStageIndex: Int
     var isClearGame = false
@@ -83,7 +83,6 @@ final class StageModel {
         let stage = self.stages[currentStageIndex]
         let y = Int(point.y)
         let x = Int(point.x)
-        //1. 세로크기 확인, 2. 가로 크기 확인
         // 크기는 index보다 +1 크다
         if y < stage.height && x < stage.map[y].count {
             return true

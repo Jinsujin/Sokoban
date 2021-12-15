@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6F6C96CB275DBF6C00D68FA0 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6C96CA275DBF6C00D68FA0 /* main.swift */; };
-		6F6C96D2275DEE4500D68FA0 /* StageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6C96D1275DEE4500D68FA0 /* StageModel.swift */; };
+		6F6C96D2275DEE4500D68FA0 /* StageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6C96D1275DEE4500D68FA0 /* StageController.swift */; };
 		6F6C96D4275E168100D68FA0 /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6C96D3275E168000D68FA0 /* Messages.swift */; };
 		6F8FD5BF27606B69000568A6 /* Stage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8FD5BE27606B69000568A6 /* Stage.swift */; };
 		6F8FD5C92760D467000568A6 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8FD5C82760D467000568A6 /* Command.swift */; };
@@ -31,7 +31,7 @@
 /* Begin PBXFileReference section */
 		6F6C96C7275DBF6C00D68FA0 /* Sokoban */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sokoban; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F6C96CA275DBF6C00D68FA0 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		6F6C96D1275DEE4500D68FA0 /* StageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StageModel.swift; sourceTree = "<group>"; };
+		6F6C96D1275DEE4500D68FA0 /* StageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StageController.swift; sourceTree = "<group>"; };
 		6F6C96D3275E168000D68FA0 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messages.swift; sourceTree = "<group>"; };
 		6F8FD5BE27606B69000568A6 /* Stage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stage.swift; sourceTree = "<group>"; };
 		6F8FD5C82760D467000568A6 /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
@@ -73,7 +73,7 @@
 				6F8FD5CA2760D491000568A6 /* GameItem.swift */,
 				6F8FD5CC2760D4CA000568A6 /* GameMap.swift */,
 				6F6C96CA275DBF6C00D68FA0 /* main.swift */,
-				6F6C96D1275DEE4500D68FA0 /* StageModel.swift */,
+				6F6C96D1275DEE4500D68FA0 /* StageController.swift */,
 				6F6C96D3275E168000D68FA0 /* Messages.swift */,
 				6F8FD5C82760D467000568A6 /* Command.swift */,
 			);
@@ -137,7 +137,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F6C96D2275DEE4500D68FA0 /* StageModel.swift in Sources */,
+				6F6C96D2275DEE4500D68FA0 /* StageController.swift in Sources */,
 				6F6C96D4275E168100D68FA0 /* Messages.swift in Sources */,
 				6F8FD5CB2760D491000568A6 /* GameItem.swift in Sources */,
 				6F8FD5BF27606B69000568A6 /* Stage.swift in Sources */,

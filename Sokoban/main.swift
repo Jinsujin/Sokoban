@@ -2,7 +2,7 @@ import Foundation
 
 print(MS.welcome)
 
-let model = StageModel()
+let model = StageController()
 model.printStartStage()
 
 mainLoop(isContinueGame: true, isClear: false)
@@ -59,12 +59,13 @@ func oneKeyAction(_ command: Command) -> Bool {
     }
     print(moveResult.systemInfo)
     
-    if model.checkStageClear() {
+    if model.checkStageClear() && !model.checkGameClear() {
         model.printStartStage()
     }
     
     if model.checkGameClear() {
         return true
     }
+    
     return false
 }
